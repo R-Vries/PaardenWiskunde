@@ -1,4 +1,4 @@
 fun main() {
-    val tui = TUI()
+    val tui = TUI(FeedingPlanner(materials))
     tui.start()
 }

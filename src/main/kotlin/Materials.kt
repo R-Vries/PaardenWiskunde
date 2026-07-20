@@ -3,6 +3,8 @@ data class Material(
     val stats: Map<StatType, Int>
 )
 
+fun Material.gainFor(stat: StatType): Int = stats[stat] ?: 0
+
 enum class StatType {
     SPEED, ACCELERATION, ALTITUDE, ENERGY, HANDLING, TOUGHNESS, BOOST, TRAINING
 }
@@ -75,4 +77,5 @@ val gudgeonMeat = Material(
     )
 )
 
+val materials = listOf(copperIngot, copperGem, oakPlank, oakPaper, wheatString, wheatGrains, gudgeonOil, gudgeonMeat)
 

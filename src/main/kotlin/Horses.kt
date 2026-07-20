@@ -16,6 +16,12 @@ data class Horse(
         }
     }
 
+    fun lowestStat(): StatType =
+        stats.maxBy { (_, stat) -> stat.max - stat.limit }.key
+
+    fun isMaxed(): Boolean = stats.all { (_, stat) -> stat.limit == stat.max }
+
+
     override fun toString(): String {
         return buildString {
             appendLine(name)
@@ -42,3 +48,5 @@ data class Stat(
         limit = (limit + amount).coerceAtMost(max)
     }
 }
+
+

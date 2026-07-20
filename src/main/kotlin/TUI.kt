@@ -1,7 +1,8 @@
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class TUI {
+class TUI(val calculator: FeedingPlanner) {
+
     private val horses = mutableListOf<Horse>()
     private val saveFile = File("horses.json")
     private val json = Json{
@@ -17,12 +18,14 @@ class TUI {
             println("1. Inspect horses")
             println("2. Add horse")
             println("3. Remove horse")
+            println("4. Calculate feeding plan")
             println("0. Exit")
 
             when (readlnOrNull()?.trim()) {
                 "1" -> showHorses()
                 "2" -> addHorse()
                 "3" -> removeHorse()
+                "4" -> feedingPlan()
                 "0" -> {
                     saveHorses()
                     println("Exiting...")
@@ -38,6 +41,11 @@ class TUI {
         horses.forEachIndexed { index, horse ->
             println("${index + 1}. $horse")
         }
+    }
+
+    private fun showNames() {
+        horses.forEachIndexed { index, horse ->
+            println("${index + 1}. ${horse.name}") }
     }
 
     private fun addHorse() {
@@ -112,6 +120,35 @@ class TUI {
             println("Horse #$index removed")
         } else {
             println("Invalid index")
+        }
+    }
+
+    private fun feedingPlan() {
+        println("=== Feeding Plan ===")
+        println("Which horse do you want the feeding plan for?")
+        showNames()
+
+        val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return
+        val plan: List<Material> = calculator.calculatePlan(horses[index - 1])
+
+        println("Feeding plan for ${horses[index - 1].name}:")
+        println(plan.joinToString("\n") { it.name })
+
+        val amount = askFeedAmount(plan.size)
+
+        println("Feeding ${plan.take(amount).joinToString(", ") { it.name}} to ${horses[index - 1].name}")
+        executePlan(horses[index - 1], plan.take(amount))
+    }
+
+    private fun askFeedAmount(maxAmount: Int): Int {
+        while (true) {
+            println("How many items do you want to feed?")
+            val amount = readlnOrNull()?.trim()?.toIntOrNull()
+
+            if (amount != null && amount in 0..maxAmount.coerceAtMost(5)) {
+                return amount
+            }
+            println("Please enter a valid number between 0 and ${maxAmount.coerceAtMost(5)}.")
         }
     }
 
