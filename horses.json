@@ -2,130 +2,130 @@
     {
         "name": "Paardappel",
         "speed": {
-            "level": 0,
-            "limit": 14,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "acceleration": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "altitude": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "energy": {
-            "level": 0,
-            "limit": 12,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "handling": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "toughness": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "boost": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         },
         "training": {
-            "level": 0,
-            "limit": 16,
-            "max": 30
+            "level": 80,
+            "limit": 80,
+            "max": 80
         }
     },
     {
         "name": "Paardbei",
         "speed": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 68,
+            "limit": 76,
+            "max": 80
         },
         "acceleration": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 53,
+            "limit": 68,
+            "max": 83
         },
         "altitude": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 55,
+            "limit": 76,
+            "max": 79
         },
         "energy": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 47,
+            "limit": 60,
+            "max": 74
         },
         "handling": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 40,
+            "limit": 78,
+            "max": 88
         },
         "toughness": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 45,
+            "limit": 66,
+            "max": 74
         },
         "boost": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 42,
+            "limit": 78,
+            "max": 78
         },
         "training": {
-            "level": 0,
-            "limit": 10,
-            "max": 30
+            "level": 46,
+            "limit": 66,
+            "max": 77
         }
     },
     {
-        "name": "Paardbol",
+        "name": "Horse #3",
         "speed": {
             "level": 1,
-            "limit": 40,
-            "max": 50
+            "limit": 30,
+            "max": 30
         },
         "acceleration": {
-            "level": 10,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 30,
+            "max": 30
         },
         "altitude": {
-            "level": 10,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 30,
+            "max": 30
         },
         "energy": {
-            "level": 10,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 26,
+            "max": 30
         },
         "handling": {
-            "level": 10,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 30,
+            "max": 30
         },
         "toughness": {
-            "level": 11,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 26,
+            "max": 30
         },
         "boost": {
-            "level": 12,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 26,
+            "max": 30
         },
         "training": {
-            "level": 13,
-            "limit": 40,
-            "max": 50
+            "level": 1,
+            "limit": 30,
+            "max": 30
         }
     }
 ]
