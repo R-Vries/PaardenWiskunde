@@ -1,21 +1,78 @@
 data class Material(
     val name: String,
-    val speed: Int = 0,
-    val acceleration: Int = 0,
-    val altitude: Int = 0,
-    val energy: Int = 0,
-    val handling: Int = 0,
-    val toughness: Int = 0,
-    val boost: Int = 0,
-    val training: Int = 0
+    val stats: Map<StatType, Int>
 )
 
-val copperIngot = Material("Copper Ingot", energy=4, toughness=8)
-val copperGem = Material("Copper Gem", speed=4, energy=2, training=6)
-val oakPlank = Material("Oak Plank", speed=2, acceleration=6, toughness=4)
-val oakPaper = Material("Oak Paper", altitude=8, boost=4)
-val wheatString = Material("Wheat String", acceleration=2, handling=4, boost=6)
-val wheatGrains = Material("Wheat Grains", speed=8, altitude=4)
-val gudgeonOil = Material("Gudgeon Oil", altitude=2, handling=6, training=4)
-val gudgeonMeat = Material("Gudgeon Meat", acceleration=4, energy=8)
+enum class StatType {
+    SPEED, ACCELERATION, ALTITUDE, ENERGY, HANDLING, TOUGHNESS, BOOST, TRAINING
+}
+
+val copperIngot = Material(
+    "Copper Ingot",
+    mapOf(
+        StatType.ENERGY to 4,
+        StatType.TOUGHNESS to 8
+    )
+)
+
+val copperGem = Material(
+    "Copper Gem",
+    mapOf(
+        StatType.SPEED to 4,
+        StatType.ENERGY to 2,
+        StatType.TRAINING to 6
+    )
+)
+
+val oakPlank = Material(
+    "Oak Plank",
+    mapOf(
+        StatType.SPEED to 2,
+        StatType.ACCELERATION to 6,
+        StatType.TOUGHNESS to 4
+    )
+)
+
+val oakPaper = Material(
+    "Oak Paper",
+    mapOf(
+        StatType.ALTITUDE to 8,
+        StatType.BOOST to 4
+    )
+)
+
+val wheatString = Material(
+    "Wheat String",
+    mapOf(
+        StatType.ACCELERATION to 2,
+        StatType.HANDLING to 4,
+        StatType.BOOST to 6
+    )
+)
+
+val wheatGrains = Material(
+    "Wheat Grains",
+    mapOf(
+        StatType.SPEED to 8,
+        StatType.ALTITUDE to 4
+    )
+)
+
+val gudgeonOil = Material(
+    "Gudgeon Oil",
+    mapOf(
+        StatType.ALTITUDE to 2,
+        StatType.HANDLING to 6,
+        StatType.TRAINING to 4
+    )
+)
+
+val gudgeonMeat = Material(
+    "Gudgeon Meat",
+    mapOf(
+        StatType.ACCELERATION to 4,
+        StatType.ENERGY to 8
+    )
+)
+
 

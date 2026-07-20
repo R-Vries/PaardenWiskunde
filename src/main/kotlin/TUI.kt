@@ -56,7 +56,16 @@ class TUI {
                 val toughness = inputStat("Toughness")
                 val boost = inputStat("Boost")
                 val training = inputStat("Training")
-                horses.add(Horse(name, speed, acceleration, altitude, energy, handling, toughness, boost, training))
+                horses.add(Horse(name, mutableMapOf(
+                    StatType.SPEED to speed,
+                    StatType.ACCELERATION to acceleration,
+                    StatType.ALTITUDE to altitude,
+                    StatType.ENERGY to energy,
+                    StatType.HANDLING to handling,
+                    StatType.TOUGHNESS to toughness,
+                    StatType.BOOST to boost,
+                    StatType.TRAINING to training
+                )))
             }
         }
     }
@@ -107,6 +116,10 @@ class TUI {
     }
 
     private fun loadHorses() {
+        if (!saveFile.exists()) {
+            println("No saved horses found, creating new file")
+            return
+        }
         try {
             val savedHorses: List<Horse> = Json.decodeFromString(saveFile.readText())
             horses.clear()

@@ -1,131 +1,137 @@
 [
     {
         "name": "Paardappel",
-        "speed": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "acceleration": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "altitude": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "energy": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "handling": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "toughness": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "boost": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
-        },
-        "training": {
-            "level": 80,
-            "limit": 80,
-            "max": 80
+        "stats": {
+            "SPEED": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "ACCELERATION": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "ALTITUDE": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "ENERGY": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "HANDLING": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "TOUGHNESS": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "BOOST": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            },
+            "TRAINING": {
+                "level": 80,
+                "limit": 80,
+                "max": 80
+            }
         }
     },
     {
         "name": "Paardbei",
-        "speed": {
-            "level": 68,
-            "limit": 76,
-            "max": 80
-        },
-        "acceleration": {
-            "level": 53,
-            "limit": 68,
-            "max": 83
-        },
-        "altitude": {
-            "level": 55,
-            "limit": 76,
-            "max": 79
-        },
-        "energy": {
-            "level": 47,
-            "limit": 60,
-            "max": 74
-        },
-        "handling": {
-            "level": 40,
-            "limit": 78,
-            "max": 88
-        },
-        "toughness": {
-            "level": 45,
-            "limit": 66,
-            "max": 74
-        },
-        "boost": {
-            "level": 42,
-            "limit": 78,
-            "max": 78
-        },
-        "training": {
-            "level": 46,
-            "limit": 66,
-            "max": 77
+        "stats": {
+            "SPEED": {
+                "level": 68,
+                "limit": 76,
+                "max": 80
+            },
+            "ACCELERATION": {
+                "level": 53,
+                "limit": 68,
+                "max": 83
+            },
+            "ALTITUDE": {
+                "level": 55,
+                "limit": 76,
+                "max": 79
+            },
+            "ENERGY": {
+                "level": 47,
+                "limit": 60,
+                "max": 74
+            },
+            "HANDLING": {
+                "level": 40,
+                "limit": 78,
+                "max": 88
+            },
+            "TOUGHNESS": {
+                "level": 45,
+                "limit": 66,
+                "max": 74
+            },
+            "BOOST": {
+                "level": 42,
+                "limit": 78,
+                "max": 78
+            },
+            "TRAINING": {
+                "level": 46,
+                "limit": 66,
+                "max": 77
+            }
         }
     },
     {
         "name": "Horse #3",
-        "speed": {
-            "level": 1,
-            "limit": 30,
-            "max": 30
-        },
-        "acceleration": {
-            "level": 1,
-            "limit": 30,
-            "max": 30
-        },
-        "altitude": {
-            "level": 1,
-            "limit": 30,
-            "max": 30
-        },
-        "energy": {
-            "level": 1,
-            "limit": 26,
-            "max": 30
-        },
-        "handling": {
-            "level": 1,
-            "limit": 30,
-            "max": 30
-        },
-        "toughness": {
-            "level": 1,
-            "limit": 26,
-            "max": 30
-        },
-        "boost": {
-            "level": 1,
-            "limit": 26,
-            "max": 30
-        },
-        "training": {
-            "level": 1,
-            "limit": 30,
-            "max": 30
+        "stats": {
+            "SPEED": {
+                "level": 1,
+                "limit": 30,
+                "max": 30
+            },
+            "ACCELERATION": {
+                "level": 1,
+                "limit": 30,
+                "max": 30
+            },
+            "ALTITUDE": {
+                "level": 1,
+                "limit": 30,
+                "max": 30
+            },
+            "ENERGY": {
+                "level": 1,
+                "limit": 26,
+                "max": 30
+            },
+            "HANDLING": {
+                "level": 1,
+                "limit": 30,
+                "max": 30
+            },
+            "TOUGHNESS": {
+                "level": 1,
+                "limit": 26,
+                "max": 30
+            },
+            "BOOST": {
+                "level": 1,
+                "limit": 26,
+                "max": 30
+            },
+            "TRAINING": {
+                "level": 1,
+                "limit": 30,
+                "max": 30
+            }
         }
     }
 ]
