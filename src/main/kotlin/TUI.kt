@@ -1,0 +1,123 @@
+import kotlinx.serialization.json.Json
+import java.io.File
+
+class TUI {
+    private val horses = mutableListOf<Horse>()
+    private val saveFile = File("horses.json")
+    private val json = Json{
+        prettyPrint = true
+        encodeDefaults = true
+    }
+
+    fun start() {
+        loadHorses()
+        while (true) {
+            println("")
+            println("=== Horse Maths ===")
+            println("1. Inspect horses")
+            println("2. Add horse")
+            println("3. Remove horse")
+            println("0. Exit")
+
+            when (readlnOrNull()?.trim()) {
+                "1" -> showHorses()
+                "2" -> addHorse()
+                "3" -> removeHorse()
+                "0" -> {
+                    saveHorses()
+                    println("Exiting...")
+                    return
+                }
+                else -> println("Invalid option")
+            }
+        }
+    }
+
+    private fun showHorses() {
+        println("=== Horses ===")
+        horses.forEachIndexed { index, horse ->
+            println("${index + 1}. $horse")
+        }
+    }
+
+    private fun addHorse() {
+        println("Enter horse name:")
+        val name = readlnOrNull()?.trim().orEmpty().ifEmpty { "Horse #${horses.size + 1}" }
+
+        println("Press 1 for default stats, 2 for custom stats")
+        when (readlnOrNull()?.trim()) {
+            "1" -> horses.add(Horse(name))
+            "2" -> {
+                val speed = inputStat("Speed")
+                val acceleration = inputStat("Acceleration")
+                val altitude = inputStat("Altitude")
+                val energy = inputStat("Energy")
+                val handling = inputStat("Handling")
+                val toughness = inputStat("Toughness")
+                val boost = inputStat("Boost")
+                val training = inputStat("Training")
+                horses.add(Horse(name, speed, acceleration, altitude, energy, handling, toughness, boost, training))
+            }
+        }
+    }
+
+    private fun inputStat(name: String): Stat {
+        println("Enter $name level (empty = 1):")
+        val level = readlnOrNull()?.trim()
+            ?.takeIf { it.isNotEmpty() }
+            ?.toIntOrNull()
+            ?: 1
+
+        val limit = inputRequiredInt("Enter $name limit:")
+        val max = inputRequiredInt("Enter $name max:")
+
+        return Stat(
+            level = level,
+            limit = limit,
+            max = max
+        )
+    }
+
+    private fun inputRequiredInt(prompt: String): Int {
+        while (true) {
+            println(prompt)
+
+            val value = readlnOrNull()
+                ?.trim()
+                ?.toIntOrNull()
+
+            if (value != null) {
+                return value
+            }
+
+            println("Please enter a valid number.")
+        }
+    }
+
+    /** 1-indexed remove function */
+    private fun removeHorse() {
+        println("Enter horse index to remove:")
+        val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return
+        if (index in 1..horses.size) {
+            horses.removeAt(index - 1)
+            println("Horse #$index removed")
+        } else {
+            println("Invalid index")
+        }
+    }
+
+    private fun loadHorses() {
+        try {
+            val savedHorses: List<Horse> = Json.decodeFromString(saveFile.readText())
+            horses.clear()
+            horses.addAll(savedHorses)
+        } catch (e: Exception) {
+            println("Could not load horses: ${e.message}")
+        }
+    }
+
+    private fun saveHorses() {
+        saveFile.writeText(json.encodeToString(horses))
+        println("${horses.size} horses saved to horses.json")
+    }
+}

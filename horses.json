@@ -1,0 +1,131 @@
+[
+    {
+        "name": "Paardappel",
+        "speed": {
+            "level": 0,
+            "limit": 14,
+            "max": 30
+        },
+        "acceleration": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "altitude": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "energy": {
+            "level": 0,
+            "limit": 12,
+            "max": 30
+        },
+        "handling": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "toughness": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "boost": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "training": {
+            "level": 0,
+            "limit": 16,
+            "max": 30
+        }
+    },
+    {
+        "name": "Paardbei",
+        "speed": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "acceleration": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "altitude": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "energy": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "handling": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "toughness": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "boost": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        },
+        "training": {
+            "level": 0,
+            "limit": 10,
+            "max": 30
+        }
+    },
+    {
+        "name": "Paardbol",
+        "speed": {
+            "level": 1,
+            "limit": 40,
+            "max": 50
+        },
+        "acceleration": {
+            "level": 10,
+            "limit": 40,
+            "max": 50
+        },
+        "altitude": {
+            "level": 10,
+            "limit": 40,
+            "max": 50
+        },
+        "energy": {
+            "level": 10,
+            "limit": 40,
+            "max": 50
+        },
+        "handling": {
+            "level": 10,
+            "limit": 40,
+            "max": 50
+        },
+        "toughness": {
+            "level": 11,
+            "limit": 40,
+            "max": 50
+        },
+        "boost": {
+            "level": 12,
+            "limit": 40,
+            "max": 50
+        },
+        "training": {
+            "level": 13,
+            "limit": 40,
+            "max": 50
+        }
+    }
+]
