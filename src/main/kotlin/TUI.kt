@@ -129,14 +129,19 @@ class TUI(val calculator: FeedingPlanner) {
         showNames()
 
         val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return
-        val plan: List<Material> = calculator.calculatePlan(horses[index - 1])
+        val plan: List<Material> = calculator.calculatePlan(horses[index - 1], "greedy")
+            .let { list -> list.sortedBy { material -> list.indexOf(material)}}
 
         println("Feeding plan for ${horses[index - 1].name}:")
-        println(plan.joinToString("\n") { it.name })
+        val formattedPlan = formatPlan(plan)
+        println(formattedPlan)
 
         val amount = askFeedAmount(plan.size)
+        val selectedFood = plan.take(amount)
+            .joinToString(", ") { it.name }
+            .ifEmpty { "nothing" }
 
-        println("Feeding ${plan.take(amount).joinToString(", ") { it.name}} to ${horses[index - 1].name}")
+        println("Feeding $selectedFood to ${horses[index - 1].name}")
         executePlan(horses[index - 1], plan.take(amount))
     }
 
