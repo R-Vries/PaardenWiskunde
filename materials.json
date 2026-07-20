@@ -67,74 +67,140 @@
       "ENERGY": 8
     }
   },
-  [
-    {
-      "name": "Granite Ingot",
-      "tier": 10,
-      "stats": {
-        "ENERGY": 5,
-        "TOUGHNESS": 10
-      }
-    },
-    {
-      "name": "Granite Gem",
-      "tier": 10,
-      "stats": {
-        "SPEED": 5,
-        "ENERGY": 2,
-        "TRAINING": 8
-      }
-    },
-    {
-      "name": "Birch Plank",
-      "tier": 10,
-      "stats": {
-        "SPEED": 2,
-        "ACCELERATION": 8,
-        "TOUGHNESS": 5
-      }
-    },
-    {
-      "name": "Birch Paper",
-      "tier": 10,
-      "stats": {
-        "ALTITUDE": 10,
-        "BOOST": 5
-      }
-    },
-    {
-      "name": "Barley String",
-      "tier": 10,
-      "stats": {
-        "ACCELERATION": 2,
-        "HANDLING": 5,
-        "BOOST": 8
-      }
-    },
-    {
-      "name": "Barley Grains",
-      "tier": 10,
-      "stats": {
-        "SPEED": 10,
-        "ALTITUDE": 5
-      }
-    },
-    {
-      "name": "Trout Oil",
-      "tier": 10,
-      "stats": {
-        "ALTITUDE": 2,
-        "HANDLING": 8,
-        "TRAINING": 5
-      }
-    },
-    {
-      "name": "Trout Meat",
-      "tier": 10,
-      "stats": {
-        "ACCELERATION": 5,
-        "ENERGY": 10
-      }
+  {
+    "name": "Granite Ingot",
+    "tier": 10,
+    "stats": {
+      "ENERGY": 5,
+      "TOUGHNESS": 10
     }
-  ]
+  },
+  {
+    "name": "Granite Gem",
+    "tier": 10,
+    "stats": {
+      "SPEED": 5,
+      "ENERGY": 2,
+      "TRAINING": 8
+    }
+  },
+  {
+    "name": "Birch Plank",
+    "tier": 10,
+    "stats": {
+      "SPEED": 2,
+      "ACCELERATION": 8,
+      "TOUGHNESS": 5
+    }
+  },
+  {
+    "name": "Birch Paper",
+    "tier": 10,
+    "stats": {
+      "ALTITUDE": 10,
+      "BOOST": 5
+    }
+  },
+  {
+    "name": "Barley String",
+    "tier": 10,
+    "stats": {
+      "ACCELERATION": 2,
+      "HANDLING": 5,
+      "BOOST": 8
+    }
+  },
+  {
+    "name": "Barley Grains",
+    "tier": 10,
+    "stats": {
+      "SPEED": 10,
+      "ALTITUDE": 5
+    }
+  },
+  {
+    "name": "Trout Oil",
+    "tier": 10,
+    "stats": {
+      "ALTITUDE": 2,
+      "HANDLING": 8,
+      "TRAINING": 5
+    }
+  },
+  {
+    "name": "Trout Meat",
+    "tier": 10,
+    "stats": {
+      "ACCELERATION": 5,
+      "ENERGY": 10
+    }
+  },
+  {
+    "name": "Gold Ingot",
+    "tier": 20,
+    "stats": {
+      "ENERGY": 5,
+      "TOUGHNESS": 12
+    }
+  },
+  {
+    "name": "Gold Gem",
+    "tier": 20,
+    "stats": {
+      "SPEED": 6,
+      "ENERGY": 3,
+      "TRAINING": 9
+    }
+  },
+  {
+    "name": "Willow Plank",
+    "tier": 20,
+    "stats": {
+      "SPEED": 3,
+      "ACCELERATION": 9,
+      "TOUGHNESS": 6
+    }
+  },
+  {
+    "name": "Willow Paper",
+    "tier": 20,
+    "stats": {
+      "ALTITUDE": 12,
+      "BOOST": 5
+    }
+  },
+  {
+    "name": "Oat String",
+    "tier": 20,
+    "stats": {
+      "ACCELERATION": 3,
+      "HANDLING": 6,
+      "BOOST": 9
+    }
+  },
+  {
+    "name": "Oat Grains",
+    "tier": 20,
+    "stats": {
+      "SPEED": 12,
+      "ALTITUDE": 5
+    }
+  },
+  {
+    "name": "Salmon Oil",
+    "tier": 20,
+    "stats": {
+      "ALTITUDE": 3,
+      "HANDLING": 9,
+      "TRAINING": 6
+    }
+  },
+  {
+    "name": "Salmon Meat",
+    "tier": 20,
+    "stats": {
+      "ACCELERATION": 5,
+      "ENERGY": 12
+    }
+  }
 ]

@@ -43,11 +43,6 @@ class TUI(val calculator: FeedingPlanner) {
         }
     }
 
-    private fun showNames() {
-        horses.forEachIndexed { index, horse ->
-            println("${index + 1}. ${horse.name}") }
-    }
-
     private fun addHorse() {
         println("Enter horse name:")
         val name = readlnOrNull()?.trim().orEmpty().ifEmpty { "Horse #${horses.size + 1}" }
@@ -75,6 +70,16 @@ class TUI(val calculator: FeedingPlanner) {
                     StatType.TRAINING to training
                 )))
             }
+        }
+    }
+
+    private fun selectHorse(): Horse {
+        while (true) {
+            horses.forEachIndexed { index, horse ->
+                println("${index + 1}. ${horse.name}") }
+            println("Enter horse index:")
+            val index = readlnOrNull()?.trim()?.toIntOrNull() ?: continue
+            return horses[index - 1]
         }
     }
 
@@ -113,26 +118,19 @@ class TUI(val calculator: FeedingPlanner) {
 
     /** 1-indexed remove function */
     private fun removeHorse() {
-        println("Enter horse index to remove:")
-        val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return
-        if (index in 1..horses.size) {
-            horses.removeAt(index - 1)
-            println("Horse #$index removed")
-        } else {
-            println("Invalid index")
-        }
+        val horse = selectHorse()
+        horses.remove(horse)
     }
 
     private fun feedingPlan() {
         println("=== Feeding Plan ===")
         println("Which horse do you want the feeding plan for?")
-        showNames()
+        val horse = selectHorse()
 
-        val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return
-        val plan: List<Material> = calculator.calculatePlan(horses[index - 1], "bfs")
+        val plan: List<Material> = calculator.calculatePlan(horse)
             .let { list -> list.sortedBy { material -> list.indexOf(material)}}
 
-        println("Feeding plan for ${horses[index - 1].name}:")
+        println("Feeding plan for ${horse.name}:")
         val formattedPlan = formatPlan(plan)
         println(formattedPlan)
 
@@ -141,8 +139,8 @@ class TUI(val calculator: FeedingPlanner) {
             .joinToString(", ") { it.name }
             .ifEmpty { "nothing" }
 
-        println("Feeding $selectedFood to ${horses[index - 1].name}")
-        executePlan(horses[index - 1], plan.take(amount))
+        println("Feeding $selectedFood to ${horse.name}")
+        executePlan(horse, plan.take(amount))
     }
 
     private fun askFeedAmount(maxAmount: Int): Int {

@@ -5,36 +5,18 @@ class FeedingPlanner(
     private val materials: List<Material>
 ) {
 
-    fun chooseBestMaterial(statType: StatType): Material {
-        return materials.maxBy {
-            it.gainFor(statType)
-        }
+    fun calculatePlan(horse: Horse): List<Material> {
+        val bestMaterials = materials
+            .filter { it.tier <= horse.highestStat() }
+            .let { filtered ->
+                val max = filtered.maxBy { it.tier }
+                filtered.filter { it.tier == max.tier}
+            }
+
+        return calculatePlanBfs(horse, bestMaterials)
     }
 
-    /** Greedy approach to calculate the best feeding plan */
-    private fun calculatePlanGreedy(horse: Horse): List<Material> {
-        val plan = mutableListOf<Material>()
-        val horseCopy = horse.deepCopy()
-
-        while (!horseCopy.isMaxed()) {
-            val targetStat = horseCopy.lowestStat()
-            val food = chooseBestMaterial(targetStat)
-            plan.add(food)
-            horseCopy.feed(food)
-        }
-
-        return plan.toList()
-    }
-
-    fun calculatePlan(horse: Horse, strategy: String = "greedy"): List<Material> {
-        return when (strategy) {
-            "greedy" -> calculatePlanGreedy(horse)
-            "bfs" -> calculatePlanBfs(horse)
-            else -> throw IllegalArgumentException("Unknown strategy: $strategy")
-        }
-    }
-
-    private fun calculatePlanBfs(horse: Horse): List<Material> {
+    private fun calculatePlanBfs(horse: Horse, materials: List<Material>): List<Material> {
         val queue = ArrayDeque<PlanNode>()
         val visited = mutableSetOf<String>()   // store visited nodes as hashes
 
@@ -91,4 +73,9 @@ fun Horse.stateHash(): String {
         .joinToString(",") { stat ->
             stat.limit.toString()
         }
+}
+
+/** Returns the highest stat level of the horse */
+fun Horse.highestStat(): Int {
+    return stats.values.maxOf { it.level }
 }
