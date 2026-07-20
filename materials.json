@@ -202,5 +202,141 @@
       "ACCELERATION": 5,
       "ENERGY": 12
     }
+  },
+  {
+    "name": "Sandstone Ingot",
+    "tier": 30,
+    "stats": {
+      "ENERGY": 6,
+      "TOUGHNESS": 14
+    }
+  },
+  {
+    "name": "Sandstone Gem",
+    "tier": 30,
+    "stats": {
+      "SPEED": 6,
+      "ENERGY": 3,
+      "TRAINING": 11
+    }
+  },
+  {
+    "name": "Acacia Plank",
+    "tier": 30,
+    "stats": {
+      "SPEED": 2,
+      "ACCELERATION": 11,
+      "TOUGHNESS": 6
+    }
+  },
+  {
+    "name": "Acacia Paper",
+    "tier": 30,
+    "stats": {
+      "ALTITUDE": 14,
+      "BOOST": 6
+    }
+  },
+  {
+    "name": "Malt String",
+    "tier": 30,
+    "stats": {
+      "ACCELERATION": 3,
+      "HANDLING": 6,
+      "BOOST": 11
+    }
+  },
+  {
+    "name": "Malt Grains",
+    "tier": 30,
+    "stats": {
+      "SPEED": 14,
+      "ALTITUDE": 6
+    }
+  },
+  {
+    "name": "Carp Oil",
+    "tier": 30,
+    "stats": {
+      "ALTITUDE": 3,
+      "HANDLING": 11,
+      "TRAINING": 6
+    }
+  },
+  {
+    "name": "Carp Meat",
+    "tier": 30,
+    "stats": {
+      "ACCELERATION": 6,
+      "ENERGY": 14
+    }
+  },
+  {
+    "name": "Iron Ingot",
+    "tier": 40,
+    "stats": {
+      "ENERGY": 6,
+      "TOUGHNESS": 16
+    }
+  },
+  {
+    "name": "Iron Gem",
+    "tier": 40,
+    "stats": {
+      "SPEED": 7,
+      "ENERGY": 3,
+      "TRAINING": 12
+    }
+  },
+  {
+    "name": "Spruce Plank",
+    "tier": 40,
+    "stats": {
+      "SPEED": 3,
+      "ACCELERATION": 12,
+      "TOUGHNESS": 7
+    }
+  },
+  {
+    "name": "Spruce Paper",
+    "tier": 40,
+    "stats": {
+      "ALTITUDE": 16,
+      "BOOST": 6
+    }
+  },
+  {
+    "name": "Hops String",
+    "tier": 40,
+    "stats": {
+      "ACCELERATION": 3,
+      "HANDLING": 7,
+      "BOOST": 12
+    }
+  },
+  {
+    "name": "Hops Grains",
+    "tier": 40,
+    "stats": {
+      "SPEED": 16,
+      "ALTITUDE": 6
+    }
+  },
+  {
+    "name": "Icefish Oil",
+    "tier": 40,
+    "stats": {
+      "ALTITUDE": 3,
+      "HANDLING": 12,
+      "TRAINING": 7
+    }
+  },
+  {
+    "name": "Icefish Meat",
+    "tier": 40,
+    "stats": {
+      "ACCELERATION": 6,
+      "ENERGY": 16
+    }
   }
 ]
