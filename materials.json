@@ -1,0 +1,140 @@
+[
+  {
+    "name": "Copper Ingot",
+    "tier": 1,
+    "stats": {
+      "ENERGY": 4,
+      "TOUGHNESS": 8
+    }
+  },
+  {
+    "name": "Copper Gem",
+    "tier": 1,
+    "stats": {
+      "SPEED": 4,
+      "ENERGY": 2,
+      "TRAINING": 6
+    }
+  },
+  {
+    "name": "Oak Plank",
+    "tier": 1,
+    "stats": {
+      "SPEED": 2,
+      "ACCELERATION": 6,
+      "TOUGHNESS": 4
+    }
+  },
+  {
+    "name": "Oak Paper",
+    "tier": 1,
+    "stats": {
+      "ALTITUDE": 8,
+      "BOOST": 4
+    }
+  },
+  {
+    "name": "Wheat String",
+    "tier": 1,
+    "stats": {
+      "ACCELERATION": 2,
+      "HANDLING": 4,
+      "BOOST": 6
+    }
+  },
+  {
+    "name": "Wheat Grains",
+    "tier": 1,
+    "stats": {
+      "SPEED": 8,
+      "ALTITUDE": 4
+    }
+  },
+  {
+    "name": "Gudgeon Oil",
+    "tier": 1,
+    "stats": {
+      "ALTITUDE": 2,
+      "HANDLING": 6,
+      "TRAINING": 4
+    }
+  },
+  {
+    "name": "Gudgeon Meat",
+    "tier": 1,
+    "stats": {
+      "ACCELERATION": 4,
+      "ENERGY": 8
+    }
+  },
+  [
+    {
+      "name": "Granite Ingot",
+      "tier": 10,
+      "stats": {
+        "ENERGY": 5,
+        "TOUGHNESS": 10
+      }
+    },
+    {
+      "name": "Granite Gem",
+      "tier": 10,
+      "stats": {
+        "SPEED": 5,
+        "ENERGY": 2,
+        "TRAINING": 8
+      }
+    },
+    {
+      "name": "Birch Plank",
+      "tier": 10,
+      "stats": {
+        "SPEED": 2,
+        "ACCELERATION": 8,
+        "TOUGHNESS": 5
+      }
+    },
+    {
+      "name": "Birch Paper",
+      "tier": 10,
+      "stats": {
+        "ALTITUDE": 10,
+        "BOOST": 5
+      }
+    },
+    {
+      "name": "Barley String",
+      "tier": 10,
+      "stats": {
+        "ACCELERATION": 2,
+        "HANDLING": 5,
+        "BOOST": 8
+      }
+    },
+    {
+      "name": "Barley Grains",
+      "tier": 10,
+      "stats": {
+        "SPEED": 10,
+        "ALTITUDE": 5
+      }
+    },
+    {
+      "name": "Trout Oil",
+      "tier": 10,
+      "stats": {
+        "ALTITUDE": 2,
+        "HANDLING": 8,
+        "TRAINING": 5
+      }
+    },
+    {
+      "name": "Trout Meat",
+      "tier": 10,
+      "stats": {
+        "ACCELERATION": 5,
+        "ENERGY": 10
+      }
+    }
+  ]
+]

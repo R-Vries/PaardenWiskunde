@@ -129,7 +129,7 @@ class TUI(val calculator: FeedingPlanner) {
         showNames()
 
         val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return
-        val plan: List<Material> = calculator.calculatePlan(horses[index - 1], "greedy")
+        val plan: List<Material> = calculator.calculatePlan(horses[index - 1], "bfs")
             .let { list -> list.sortedBy { material -> list.indexOf(material)}}
 
         println("Feeding plan for ${horses[index - 1].name}:")
