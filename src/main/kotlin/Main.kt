@@ -1,8 +1,7 @@
 import java.io.File
 
 fun main() {
-    val tui = TUI(Stall(FeedingPlanner(MaterialRepository.materials)))
-    tui.start()
+    TUI.start()
 }
 
 object AppConfig {

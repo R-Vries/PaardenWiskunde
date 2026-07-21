@@ -2,8 +2,7 @@ import java.io.File
 import kotlin.collections.take
 import kotlin.text.ifEmpty
 
-class TUI(val stall: Stall) {
-
+object TUI {
     private val saveFile = File(AppConfig.dataDirectory, "horses.json")
 
     fun start() {
@@ -15,49 +14,88 @@ class TUI(val stall: Stall) {
         )
         loadHorses()
         while (true) {
-            println("")
-            println("========= Horse Maths =========")
-            println("1. Inspect horses")
-            println("2. Add horse")
-            println("3. Remove horse")
-            println("4. Calculate feeding plan")
-            println("5. Rename horse")
-            println("6. Level up horse")
-            println("7. Set material level limit")
-            println("0. Exit")
+            val stall = selectStall() ?: break
+            stallMenu(stall)
+        }
+        saveHorses()
+        println("Exiting...")
+    }
 
-            when (readlnOrNull()?.trim()) {
-                "1" -> showHorses()
-                "2" -> addHorse()
-                "3" -> removeHorse()
-                "4" -> feedingPlan()
-                "5" -> renameHorse()
-                "6" -> levelHorse()
-                "7" -> setMaterialLevel()
-                "0" -> {
-                    saveHorses()
-                    println("Exiting...")
-                    return
-                }
-                else -> println("Invalid option")
+    private fun selectStall(): Stall? {
+        println("========= Select Stall =========")
+
+        Stable.stalls.forEachIndexed { index, stall ->
+            println("${index + 1}. ${stall.name}")
+        }
+
+        println("${Stable.stalls.size + 1}. Add new stall")
+        println("0. Exit")
+
+        return when (val choice = inputRequiredInt("Select stall:")) {
+            0 -> null
+            Stable.stalls.size + 1 -> {
+                val name = readlnOrNull()?.trim()?: "Stable #${Stable.stalls.size + 1}"
+                Stable.addStall(name)
+            }
+            in 1..Stable.stalls.size -> Stable.getStall(choice - 1)
+            else -> {
+                println("InvalidOption")
+                selectStall()
             }
         }
     }
 
-    private fun setMaterialLevel() {
+    private fun stallMenu(stall: Stall) {
         while (true) {
-            val error = stall.setMaterialTier(
-                inputRequiredInt("Enter material tier:"))
-            if (error != null) println(error) else return
+            println("========= ${stall.name} =========")
+            println("1. Inspect horses")
+            println("2. Calculate feeding plan")
+            println("3. Add horse")
+            println("4. Remove horse")
+            println("5. Rename horse")
+            println("6. Level up horse")
+            println("7. Set material level limit")
+            println("0. Back to stall selection")
+
+            when (readlnOrNull()?.trim()) {
+                "1" -> showHorses(stall)
+                "2" -> feedingPlan(stall)
+                "3" -> addHorse(stall)
+                "4" -> removeHorse(stall)
+                "5" -> renameHorse(stall)
+                "6" -> levelHorse(stall)
+                "7" -> setMaterialLevel(stall)
+                "0" -> return
+
+                else -> println("Invalid option")
+
+            }
         }
     }
 
-    private fun showHorses() {
+    private fun showHorses(stall: Stall) {
         println("========= Horses =========")
         println(stall)
     }
 
-    private fun addHorse() {
+    private fun feedingPlan(stall: Stall) {
+        val horse = selectHorse(stall)?: return
+        val plan = stall.feedingPlan(horse)
+
+        println("Feeding plan for ${horse.name}:")
+        val formattedPlan = formatPlan(plan)
+        println(formattedPlan)
+
+        val amount = askFeedAmount(plan.size)
+        val selectedFood = plan.take(amount)
+            .joinToString(", ") { it.name }
+            .ifEmpty { "nothing" }
+
+        println("Feeding $selectedFood to ${horse.name}")
+        stall.executePlan(horse, plan.take(amount))
+    }
+
+    private fun addHorse(stall: Stall) {
         println("Enter horse name:")
         val name = readlnOrNull()?.trim().orEmpty().ifEmpty { "Horse #${stall.horseCount + 1}" }
 
@@ -73,9 +111,38 @@ class TUI(val stall: Stall) {
         }
     }
 
-    private fun selectHorse(): Horse? {
+    /** 1-indexed remove function */
+    private fun removeHorse(stall: Stall) {
+        val horse = selectHorse(stall)?: return
+        stall.remove(horse)
+    }
+
+    private fun renameHorse(stall: Stall) {
+        val horse = selectHorse(stall)
+        println("Enter the new name: ")
+        horse?.rename(readlnOrNull()?.trim().orEmpty().ifEmpty { horse.name })
+    }
+
+    private fun levelHorse(stall: Stall) {
+        println("=== Level up horse ===")
+        val horse = selectHorse(stall)?: return
+        val newLevels = horse.stats.keys.associateWith { type ->
+            inputRequiredInt("What is the new ${type.name} level?")
+        }
+        stall.levelHorse(horse, newLevels).forEach { println(it) }
+    }
+
+    private fun setMaterialLevel(stall: Stall) {
         while (true) {
-            showHorses()
+            val error = stall.setMaterialTier(
+                inputRequiredInt("Enter material tier:"))
+            if (error != null) println(error) else return
+        }
+    }
+
+    private fun selectHorse(stall: Stall): Horse? {
+        while (true) {
+            showHorses(stall)
             println("Enter horse index: (enter to go back)")
             val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return null
             if (index !in 1..stall.horseCount) {
@@ -84,21 +151,6 @@ class TUI(val stall: Stall) {
             }
             return stall.get(index - 1)
         }
-    }
-
-    private fun renameHorse() {
-        val horse = selectHorse()
-        println("Enter the new name: ")
-        horse?.rename(readlnOrNull()?.trim().orEmpty().ifEmpty { horse.name })
-    }
-
-    private fun levelHorse() {
-        println("=== Level up horse ===")
-        val horse = selectHorse()?: return
-        val newLevels = horse.stats.keys.associateWith { type ->
-            inputRequiredInt("What is the new ${type.name} level?")
-        }
-        stall.levelHorse(horse, newLevels).forEach { println(it) }
     }
 
     private fun inputStat(name: String): Stat {
@@ -134,29 +186,6 @@ class TUI(val stall: Stall) {
         }
     }
 
-    /** 1-indexed remove function */
-    private fun removeHorse() {
-        val horse = selectHorse()?: return
-        stall.remove(horse)
-    }
-
-    private fun feedingPlan() {
-        val horse = selectHorse()?: return
-        val plan = stall.feedingPlan(horse)
-
-        println("Feeding plan for ${horse.name}:")
-        val formattedPlan = formatPlan(plan)
-        println(formattedPlan)
-
-        val amount = askFeedAmount(plan.size)
-        val selectedFood = plan.take(amount)
-            .joinToString(", ") { it.name }
-            .ifEmpty { "nothing" }
-
-        println("Feeding $selectedFood to ${horse.name}")
-        stall.executePlan(horse, plan.take(amount))
-    }
-
     private fun askFeedAmount(maxAmount: Int): Int {
         while (true) {
             println("How many items do you want to feed?")
@@ -175,14 +204,14 @@ class TUI(val stall: Stall) {
             return
         }
         try {
-            stall.loadHorses(saveFile.readText())
+            Stable.import(saveFile.readText())
         } catch (e: Exception) {
             println("Could not load horses: ${e.message}")
         }
     }
 
     private fun saveHorses() {
-        saveFile.writeText(stall.getJson())
-        println("${stall.horseCount} horses saved to ${saveFile.absolutePath}")
+        saveFile.writeText(Stable.getJson())
+        println("Saved horses to ${saveFile.absolutePath}")
     }
 }
