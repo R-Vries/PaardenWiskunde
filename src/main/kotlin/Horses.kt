@@ -1,4 +1,5 @@
 import kotlinx.serialization.Serializable
+import kotlin.collections.get
 
 val defaultStats = StatType.entries.associateWith {
     Stat(1, 10, 30)
@@ -37,6 +38,10 @@ data class Horse(
 
     fun rename(newName: String) {
         name = newName
+    }
+
+    fun levelUp(newLevels: Map<StatType, Int>) = newLevels.forEach { (type, level) ->
+        stats[type]?.levelUp(level)
     }
 }
 

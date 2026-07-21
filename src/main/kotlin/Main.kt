@@ -1,7 +1,8 @@
 import java.io.File
 
 fun main() {
-    val tui = TUI(FeedingPlanner(materials))
+    val mr = MaterialRepository
+    val tui = TUI(Stall(mr.maxTier, FeedingPlanner(mr.materials)))
     tui.start()
 }
 
@@ -21,5 +22,4 @@ object AppConfig {
             }
 }
 
-//TODO add higher level stats
 //TODO allow selection of food tier

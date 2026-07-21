@@ -1,6 +1,6 @@
 # PaardenWiskunde (Horse Maths)
 
-PaardenWiskunde is a Kotlin command-line (TUI) application for managing Wynncraft horse data. 
+PaardenWiskunde is a Kotlin command-line (TUI) application for managing Wynncraft horse data, and determining the most optimal food plan. 
 
 ## Requirements
 
@@ -51,20 +51,6 @@ After a successful deployment, the application will be available at:
 ```
 
 ## Starting the Application
-
-The application can be started in two ways.
-
-### Windows Start Menu
-
-Use:
-
-```text
-Windows key → Search "PaardenWiskunde"
-```
-
-and launch the application.
-
-### Manually
 
 Run:
 
@@ -139,10 +125,6 @@ Check that deployment completed successfully and that:
 ```
 
 has an updated modification date.
-
-### The application closes immediately
-
-Run the `.bat` file from a terminal window to see any error messages.
 
 ## Available Gradle Tasks
 

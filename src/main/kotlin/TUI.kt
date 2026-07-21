@@ -1,14 +1,10 @@
-import kotlinx.serialization.json.Json
 import java.io.File
+import kotlin.collections.take
+import kotlin.text.ifEmpty
 
-class TUI(val calculator: FeedingPlanner) {
+class TUI(val stall: Stall) {
 
-    private val horses = mutableListOf<Horse>()
     private val saveFile = File(AppConfig.dataDirectory, "horses.json")
-    private val json = Json{
-        prettyPrint = true
-        encodeDefaults = true
-    }
 
     fun start() {
         println(
@@ -20,13 +16,14 @@ class TUI(val calculator: FeedingPlanner) {
         loadHorses()
         while (true) {
             println("")
-            println("=== Horse Maths ===")
+            println("========= Horse Maths =========")
             println("1. Inspect horses")
             println("2. Add horse")
             println("3. Remove horse")
             println("4. Calculate feeding plan")
             println("5. Rename horse")
             println("6. Level up horse")
+            println("7. Set material level limit")
             println("0. Exit")
 
             when (readlnOrNull()?.trim()) {
@@ -36,6 +33,7 @@ class TUI(val calculator: FeedingPlanner) {
                 "4" -> feedingPlan()
                 "5" -> renameHorse()
                 "6" -> levelHorse()
+                "7" -> setMaterialLevel()
                 "0" -> {
                     saveHorses()
                     println("Exiting...")
@@ -46,20 +44,23 @@ class TUI(val calculator: FeedingPlanner) {
         }
     }
 
+    private fun setMaterialLevel() {
+        //TODO do something with the return value
+        stall.setMaterialTier(inputRequiredInt("Enter material tier:"))
+    }
+
     private fun showHorses() {
-        println("=== Horses ===")
-        horses.forEachIndexed { index, horse ->
-            println("${index + 1}. $horse")
-        }
+        println("========= Horses =========")
+        println(stall)
     }
 
     private fun addHorse() {
         println("Enter horse name:")
-        val name = readlnOrNull()?.trim().orEmpty().ifEmpty { "Horse #${horses.size + 1}" }
+        val name = readlnOrNull()?.trim().orEmpty().ifEmpty { "Horse #${stall.horseCount + 1}" }
 
         println("Press 1 for default stats, 2 for custom stats")
         when (readlnOrNull()?.trim()) {
-            "1" -> horses.add(Horse(name))
+            "1" -> stall.add(Horse(name))
             "2" -> {
                 val speed = inputStat("Speed")
                 val acceleration = inputStat("Acceleration")
@@ -69,7 +70,7 @@ class TUI(val calculator: FeedingPlanner) {
                 val toughness = inputStat("Toughness")
                 val boost = inputStat("Boost")
                 val training = inputStat("Training")
-                horses.add(Horse(name, mutableMapOf(
+                stall.add(Horse(name, mutableMapOf(
                     StatType.SPEED to speed,
                     StatType.ACCELERATION to acceleration,
                     StatType.ALTITUDE to altitude,
@@ -85,15 +86,14 @@ class TUI(val calculator: FeedingPlanner) {
 
     private fun selectHorse(): Horse? {
         while (true) {
-            horses.forEachIndexed { index, horse ->
-                println("${index + 1}. ${horse.name}") }
+            showHorses()
             println("Enter horse index: (enter to go back)")
             val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return null
-            if (index !in 1..horses.size) {
+            if (index !in 1..stall.horseCount) {
                 println("Invalid index, try again")
                 continue
             }
-            return horses[index - 1]
+            return stall.get(index - 1)
         }
     }
 
@@ -105,11 +105,12 @@ class TUI(val calculator: FeedingPlanner) {
 
     private fun levelHorse() {
         println("=== Level up horse ===")
-        val horse = selectHorse()
-        horse?.stats?.forEach { (type, stat) ->
-            val newLevel = inputRequiredInt("What is the new ${type.name} level?")
-            stat.levelUp(newLevel)?.let { println(it) }
+        val horse = selectHorse()?: return
+        val newLevels = horse.stats.keys.associateWith { type ->
+            inputRequiredInt("What is the new ${type.name} level?")
         }
+        stall.levelHorse(horse, newLevels)
+        //TODO display error message if level up failed
     }
 
     private fun inputStat(name: String): Stat {
@@ -147,17 +148,13 @@ class TUI(val calculator: FeedingPlanner) {
 
     /** 1-indexed remove function */
     private fun removeHorse() {
-        val horse = selectHorse()
-        horses.remove(horse)
+        val horse = selectHorse()?: return
+        stall.remove(horse)
     }
 
     private fun feedingPlan() {
-        println("=== Feeding Plan ===")
-        println("Which horse do you want the feeding plan for?")
         val horse = selectHorse()?: return
-
-        val plan: List<Material> = calculator.calculatePlan(horse)
-            .let { list -> list.sortedBy { material -> list.indexOf(material)}}
+        val plan = stall.feedingPlan(horse)
 
         println("Feeding plan for ${horse.name}:")
         val formattedPlan = formatPlan(plan)
@@ -169,7 +166,7 @@ class TUI(val calculator: FeedingPlanner) {
             .ifEmpty { "nothing" }
 
         println("Feeding $selectedFood to ${horse.name}")
-        executePlan(horse, plan.take(amount))
+        stall.executePlan(horse, plan.take(amount))
     }
 
     private fun askFeedAmount(maxAmount: Int): Int {
@@ -190,16 +187,14 @@ class TUI(val calculator: FeedingPlanner) {
             return
         }
         try {
-            val savedHorses: List<Horse> = Json.decodeFromString(saveFile.readText())
-            horses.clear()
-            horses.addAll(savedHorses)
+            stall.loadHorses(saveFile.readText())
         } catch (e: Exception) {
             println("Could not load horses: ${e.message}")
         }
     }
 
     private fun saveHorses() {
-        saveFile.writeText(json.encodeToString(horses))
-        println("${horses.size} horses saved to ${saveFile.absolutePath}")
+        saveFile.writeText(stall.getJson())
+        println("${stall.horseCount} horses saved to ${saveFile.absolutePath}")
     }
 }

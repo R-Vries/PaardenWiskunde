@@ -48,8 +48,6 @@ private data class PlanNode(
     val plan: List<Material>
 )
 
-fun executePlan(horse: Horse, plan: List<Material>) = plan.forEach { horse.feed(it)}
-
 fun formatPlan(plan: List<Material>): String =
     plan
         .groupingBy { it.name }
