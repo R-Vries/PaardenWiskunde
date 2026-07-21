@@ -1,10 +1,7 @@
-import java.io.File
 import kotlin.collections.take
 import kotlin.text.ifEmpty
 
 object TUI {
-    private val saveFile = File(AppConfig.dataDirectory, "horses.json")
-
     fun start() {
         println(
             if (AppConfig.isDevelopment)
@@ -12,12 +9,12 @@ object TUI {
             else
                 "Running in PRODUCTION mode"
         )
-        loadHorses()
+        StableRepository.load()
         while (true) {
             val stall = selectStall() ?: break
             stallMenu(stall)
         }
-        saveHorses()
+        StableRepository.save()
         println("Exiting...")
     }
 
@@ -196,22 +193,5 @@ object TUI {
             }
             println("Please enter a valid number between 0 and ${maxAmount.coerceAtMost(5)}.")
         }
-    }
-
-    private fun loadHorses() {
-        if (!saveFile.exists()) {
-            println("No saved horses found, creating new file")
-            return
-        }
-        try {
-            Stable.import(saveFile.readText())
-        } catch (e: Exception) {
-            println("Could not load horses: ${e.message}")
-        }
-    }
-
-    private fun saveHorses() {
-        saveFile.writeText(Stable.getJson())
-        println("Saved horses to ${saveFile.absolutePath}")
     }
 }
