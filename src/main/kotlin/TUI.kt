@@ -65,25 +65,10 @@ class TUI(val stall: Stall) {
         when (readlnOrNull()?.trim()) {
             "1" -> stall.add(Horse(name))
             "2" -> {
-                //TODO this can be much shorter
-                val speed = inputStat("Speed")
-                val acceleration = inputStat("Acceleration")
-                val altitude = inputStat("Altitude")
-                val energy = inputStat("Energy")
-                val handling = inputStat("Handling")
-                val toughness = inputStat("Toughness")
-                val boost = inputStat("Boost")
-                val training = inputStat("Training")
-                stall.add(Horse(name, mutableMapOf(
-                    StatType.SPEED to speed,
-                    StatType.ACCELERATION to acceleration,
-                    StatType.ALTITUDE to altitude,
-                    StatType.ENERGY to energy,
-                    StatType.HANDLING to handling,
-                    StatType.TOUGHNESS to toughness,
-                    StatType.BOOST to boost,
-                    StatType.TRAINING to training
-                )))
+                val stats = StatType.entries.associateWith { type ->
+                    inputStat(type.name.lowercase().replaceFirstChar { it.uppercase() })
+                }
+                stall.add(name, stats)
             }
         }
     }
@@ -113,8 +98,7 @@ class TUI(val stall: Stall) {
         val newLevels = horse.stats.keys.associateWith { type ->
             inputRequiredInt("What is the new ${type.name} level?")
         }
-        stall.levelHorse(horse, newLevels)
-        //TODO display error message if level up failed
+        stall.levelHorse(horse, newLevels).forEach { println(it) }
     }
 
     private fun inputStat(name: String): Stat {

@@ -1,9 +1,7 @@
 import java.io.File
 
 fun main() {
-    val tui = TUI(Stall(
-        MaterialRepository.maxTier,
-        FeedingPlanner(MaterialRepository.materials)))
+    val tui = TUI(Stall(FeedingPlanner(MaterialRepository.materials)))
     tui.start()
 }
 

@@ -40,8 +40,18 @@ data class Horse(
         name = newName
     }
 
-    fun levelUp(newLevels: Map<StatType, Int>) = newLevels.forEach { (type, level) ->
-        stats[type]?.levelUp(level)
+    /**
+     * Increases the levels of specific stats for the horse based on the provided mapping.
+     *
+     * @param newLevels A map where the key is the type of stat and the value is the new level to be set for that stat.
+     * @return A list of messages reporting the results of each stat's level up. No errors lead to an empty list of messages.
+     */
+    fun levelUp(newLevels: Map<StatType, Int>): List<String> {
+        return newLevels.mapNotNull { (type, level) ->
+            stats[type]?.levelUp(level)?.let { error ->
+                "$type: $error"
+            }
+        }
     }
 }
 
