@@ -1,17 +1,19 @@
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
-class Stall(val calculator: FeedingPlanner) {
-    private val horses = mutableListOf<Horse>()
-    var horseCount = 0
+@Serializable
+class Stall(
+    val name: String,
+    private val horses: MutableList<Horse> = mutableListOf()
+) {
+    val horseCount: Int
+        get() = horses.size
 
-    private val json = Json{
-        prettyPrint = true
-        encodeDefaults = true
-    }
+    @Transient
+    private val calculator = FeedingPlanner(MaterialRepository.materials)
 
     fun setMaterialTier(tier: Int): String? =
         calculator.setMaterialTier(tier)
-
 
     fun feedingPlan(horse: Horse): List<Material> =
         calculator.calculatePlan(horse)
@@ -19,21 +21,12 @@ class Stall(val calculator: FeedingPlanner) {
 
     fun executePlan(horse: Horse, plan: List<Material>) = plan.forEach { horse.feed(it)}
 
-    //TODO ugly that this gets a horse. Maybe an index is better? Causes changes everywhere that selectHorse is used...
+    //ugly that this gets a horse. Maybe an index is better? Causes changes everywhere that selectHorse is used...
     fun levelHorse(horse: Horse, newLevels: Map<StatType, Int>): List<String> =
         horse.levelUp(newLevels)
 
-    fun getJson(): String = json.encodeToString(horses)
-
-    fun loadHorses(json: String) {
-        horses.clear()
-        horses.addAll(Json.decodeFromString(json))
-        horseCount = horses.size
-    }
-
     fun add(horse: Horse) {
         horses.add(horse)
-        horseCount++
     }
 
     /**
@@ -48,7 +41,6 @@ class Stall(val calculator: FeedingPlanner) {
 
     fun remove(horse: Horse) {
         horses.remove(horse)
-        horseCount--
     }
 
     fun get(index: Int): Horse = horses[index]
