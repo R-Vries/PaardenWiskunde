@@ -1,6 +1,6 @@
 import kotlinx.serialization.json.Json
 
-class Stall(var materialTier: Int, val calculator: FeedingPlanner) {
+class Stall(val calculator: FeedingPlanner) {
     private val horses = mutableListOf<Horse>()
     var horseCount = 0
 
@@ -9,17 +9,9 @@ class Stall(var materialTier: Int, val calculator: FeedingPlanner) {
         encodeDefaults = true
     }
 
-    fun setMaterialTier(tier: Int): String? {
-        return when {
-            tier % 10 != 0 -> "Material tier must be a multiple of 10."
-            tier > MaterialRepository.maxTier -> "Material tier cannot exceed ${MaterialRepository.maxTier}."
-            tier < 0 -> "Material tier cannot be negative."
-            else -> {
-                materialTier = tier
-                null
-            }
-        }
-    }
+    fun setMaterialTier(tier: Int): String? =
+        calculator.setMaterialTier(tier)
+
 
     fun feedingPlan(horse: Horse): List<Material> =
         calculator.calculatePlan(horse)
@@ -27,7 +19,8 @@ class Stall(var materialTier: Int, val calculator: FeedingPlanner) {
 
     fun executePlan(horse: Horse, plan: List<Material>) = plan.forEach { horse.feed(it)}
 
-    fun levelHorse(horse: Horse, newLevels: Map<StatType, Int>) =
+    //TODO ugly that this gets a horse. Maybe an index is better? Causes changes everywhere that selectHorse is used...
+    fun levelHorse(horse: Horse, newLevels: Map<StatType, Int>): List<String> =
         horse.levelUp(newLevels)
 
     fun getJson(): String = json.encodeToString(horses)
@@ -42,6 +35,16 @@ class Stall(var materialTier: Int, val calculator: FeedingPlanner) {
         horses.add(horse)
         horseCount++
     }
+
+    /**
+     * Adds a new horse with the specified name and statistical attributes to the collection of horses.
+     *
+     * @param name The name of the horse to be added.
+     * @param stats A map where each key represents a type of stat (e.g., SPEED, ENERGY),
+     * and the corresponding value indicates the detailed properties of that stat.
+     */
+    fun add(name: String, stats: Map<StatType, Stat>) =
+        add(Horse(name, stats.toMutableMap()))
 
     fun remove(horse: Horse) {
         horses.remove(horse)
