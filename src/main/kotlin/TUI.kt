@@ -20,6 +20,7 @@ class TUI(val calculator: FeedingPlanner) {
             println("3. Remove horse")
             println("4. Calculate feeding plan")
             println("5. Rename horse")
+            println("6. Level up horse")
             println("0. Exit")
 
             when (readlnOrNull()?.trim()) {
@@ -28,6 +29,7 @@ class TUI(val calculator: FeedingPlanner) {
                 "3" -> removeHorse()
                 "4" -> feedingPlan()
                 "5" -> renameHorse()
+                "6" -> levelHorse()
                 "0" -> {
                     saveHorses()
                     println("Exiting...")
@@ -75,12 +77,16 @@ class TUI(val calculator: FeedingPlanner) {
         }
     }
 
-    private fun selectHorse(): Horse {
+    private fun selectHorse(): Horse? {
         while (true) {
             horses.forEachIndexed { index, horse ->
                 println("${index + 1}. ${horse.name}") }
-            println("Enter horse index:")
-            val index = readlnOrNull()?.trim()?.toIntOrNull() ?: continue
+            println("Enter horse index: (enter to go back)")
+            val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return null
+            if (index !in 1..horses.size) {
+                println("Invalid index, try again")
+                continue
+            }
             return horses[index - 1]
         }
     }
@@ -88,7 +94,15 @@ class TUI(val calculator: FeedingPlanner) {
     private fun renameHorse() {
         val horse = selectHorse()
         println("Enter the new name: ")
-        horse.rename(readlnOrNull()?.trim().orEmpty().ifEmpty { horse.name })
+        horse?.rename(readlnOrNull()?.trim().orEmpty().ifEmpty { horse.name })
+    }
+
+    private fun levelHorse() {
+        val horse = selectHorse()
+        horse?.stats?.forEach { (type, stat) ->
+            val newLevel = inputRequiredInt("What is the new ${type.name} level?")
+            stat.levelUp(newLevel)?.let { println(it) }
+        }
     }
 
     private fun inputStat(name: String): Stat {
@@ -133,7 +147,7 @@ class TUI(val calculator: FeedingPlanner) {
     private fun feedingPlan() {
         println("=== Feeding Plan ===")
         println("Which horse do you want the feeding plan for?")
-        val horse = selectHorse()
+        val horse = selectHorse()?: return
 
         val plan: List<Material> = calculator.calculatePlan(horse)
             .let { list -> list.sortedBy { material -> list.indexOf(material)}}

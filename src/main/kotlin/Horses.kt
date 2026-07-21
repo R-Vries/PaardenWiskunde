@@ -42,7 +42,7 @@ data class Horse(
 
 @Serializable
 data class Stat(
-    val level: Int,
+    var level: Int,
     var limit: Int,
     val max: Int
 ) {
@@ -50,6 +50,23 @@ data class Stat(
     /** Increase the limit by the amount specified, up until the maximum */
     fun increase(amount: Int) {
         limit = (limit + amount).coerceAtMost(max)
+    }
+
+    fun levelUp(newLevel: Int): String? {
+        return when {
+            newLevel < 1 -> {
+                level = 1
+                "Level must be at least 1. Level has been set to 1."
+            }
+            newLevel > limit -> {
+                level = limit
+                "Level $newLevel is higher than the limit ($limit). Level has been set to $limit."
+            }
+            else -> {
+                level = newLevel
+                null
+            }
+        }
     }
 }
 
