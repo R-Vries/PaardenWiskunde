@@ -31,6 +31,7 @@ object TUI {
         return when (val choice = inputRequiredInt("Select stall:")) {
             0 -> null
             Stable.stalls.size + 1 -> {
+                println("Enter stall name:")
                 val name = readlnOrNull()?.trim()?: "Stable #${Stable.stalls.size + 1}"
                 Stable.addStall(name)
             }
