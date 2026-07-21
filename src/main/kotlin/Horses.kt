@@ -6,7 +6,7 @@ val defaultStats = StatType.entries.associateWith {
 
 @Serializable
 data class Horse(
-    val name: String,
+    var name: String,
     val stats: MutableMap<StatType, Stat> = defaultStats
 ) {
     /** Increase each stat's limit by the amount specified by the material */
@@ -33,6 +33,10 @@ data class Horse(
                 )
             }
         }.trimIndent()
+    }
+
+    fun rename(newName: String) {
+        name = newName
     }
 }
 

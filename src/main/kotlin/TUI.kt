@@ -19,6 +19,7 @@ class TUI(val calculator: FeedingPlanner) {
             println("2. Add horse")
             println("3. Remove horse")
             println("4. Calculate feeding plan")
+            println("5. Rename horse")
             println("0. Exit")
 
             when (readlnOrNull()?.trim()) {
@@ -26,6 +27,7 @@ class TUI(val calculator: FeedingPlanner) {
                 "2" -> addHorse()
                 "3" -> removeHorse()
                 "4" -> feedingPlan()
+                "5" -> renameHorse()
                 "0" -> {
                     saveHorses()
                     println("Exiting...")
@@ -81,6 +83,12 @@ class TUI(val calculator: FeedingPlanner) {
             val index = readlnOrNull()?.trim()?.toIntOrNull() ?: continue
             return horses[index - 1]
         }
+    }
+
+    private fun renameHorse() {
+        val horse = selectHorse()
+        println("Enter the new name: ")
+        horse.rename(readlnOrNull()?.trim().orEmpty().ifEmpty { horse.name })
     }
 
     private fun inputStat(name: String): Stat {
