@@ -133,5 +133,50 @@
                 "max": 30
             }
         }
+    },
+    {
+        "name": "Goed paard",
+        "stats": {
+            "SPEED": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "ACCELERATION": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "ALTITUDE": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "ENERGY": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "HANDLING": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "TOUGHNESS": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "BOOST": {
+                "level": 40,
+                "limit": 50,
+                "max": 80
+            },
+            "TRAINING": {
+                "level": 40,
+                "limit": 50,
+                "max": 60
+            }
+        }
     }
 ]

@@ -45,8 +45,11 @@ class TUI(val stall: Stall) {
     }
 
     private fun setMaterialLevel() {
-        //TODO do something with the return value
-        stall.setMaterialTier(inputRequiredInt("Enter material tier:"))
+        while (true) {
+            val error = stall.setMaterialTier(
+                inputRequiredInt("Enter material tier:"))
+            if (error != null) println(error) else return
+        }
     }
 
     private fun showHorses() {
@@ -62,6 +65,7 @@ class TUI(val stall: Stall) {
         when (readlnOrNull()?.trim()) {
             "1" -> stall.add(Horse(name))
             "2" -> {
+                //TODO this can be much shorter
                 val speed = inputStat("Speed")
                 val acceleration = inputStat("Acceleration")
                 val altitude = inputStat("Altitude")

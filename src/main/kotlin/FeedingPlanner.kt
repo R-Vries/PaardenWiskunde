@@ -4,9 +4,13 @@ import kotlin.collections.component2
 class FeedingPlanner(
     private val materials: List<Material>
 ) {
+    private var maxTier = 1
+
+    private val currentMaterials: List<Material>
+        get() = materials.filter { it.tier == maxTier }
 
     fun calculatePlan(horse: Horse): List<Material> {
-        val bestMaterials = materials
+        val bestMaterials = currentMaterials
             .filter { it.tier <= horse.highestStat() }
             .let { filtered ->
                 val max = filtered.maxBy { it.tier }
@@ -40,6 +44,17 @@ class FeedingPlanner(
         return emptyList()
     }
 
+    fun setMaterialTier(tier: Int): String? {
+        return when {
+            tier % 10 != 0 && tier != 1 -> "Material tier must be 1 or a multiple of 10."
+            tier > MaterialRepository.maxTier -> "Material tier cannot exceed ${MaterialRepository.maxTier}."
+            tier < 0 -> "Material tier cannot be negative."
+            else -> {
+                maxTier = tier
+                null
+            }
+        }
+    }
 }
 
 /** A node in the plan graph, containing the current stats of the horse and the list of materials fed */

@@ -9,17 +9,9 @@ class Stall(var materialTier: Int, val calculator: FeedingPlanner) {
         encodeDefaults = true
     }
 
-    fun setMaterialTier(tier: Int): String? {
-        return when {
-            tier % 10 != 0 -> "Material tier must be a multiple of 10."
-            tier > MaterialRepository.maxTier -> "Material tier cannot exceed ${MaterialRepository.maxTier}."
-            tier < 0 -> "Material tier cannot be negative."
-            else -> {
-                materialTier = tier
-                null
-            }
-        }
-    }
+    fun setMaterialTier(tier: Int): String? =
+        calculator.setMaterialTier(tier)
+
 
     fun feedingPlan(horse: Horse): List<Material> =
         calculator.calculatePlan(horse)
