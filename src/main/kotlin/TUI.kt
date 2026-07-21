@@ -4,13 +4,19 @@ import java.io.File
 class TUI(val calculator: FeedingPlanner) {
 
     private val horses = mutableListOf<Horse>()
-    private val saveFile = File("horses.json")
+    private val saveFile = File(AppConfig.dataDirectory, "horses.json")
     private val json = Json{
         prettyPrint = true
         encodeDefaults = true
     }
 
     fun start() {
+        println(
+            if (AppConfig.isDevelopment)
+                "Running in DEVELOPMENT mode"
+            else
+                "Running in PRODUCTION mode"
+        )
         loadHorses()
         while (true) {
             println("")
@@ -98,6 +104,7 @@ class TUI(val calculator: FeedingPlanner) {
     }
 
     private fun levelHorse() {
+        println("=== Level up horse ===")
         val horse = selectHorse()
         horse?.stats?.forEach { (type, stat) ->
             val newLevel = inputRequiredInt("What is the new ${type.name} level?")
@@ -193,6 +200,6 @@ class TUI(val calculator: FeedingPlanner) {
 
     private fun saveHorses() {
         saveFile.writeText(json.encodeToString(horses))
-        println("${horses.size} horses saved to horses.json")
+        println("${horses.size} horses saved to ${saveFile.absolutePath}")
     }
 }
