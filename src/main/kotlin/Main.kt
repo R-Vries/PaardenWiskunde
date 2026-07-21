@@ -21,5 +21,3 @@ object AppConfig {
                 )
             }
 }
-
-//TODO allow selection of food tier
