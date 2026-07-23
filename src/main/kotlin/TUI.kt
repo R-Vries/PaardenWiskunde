@@ -19,7 +19,7 @@ object TUI {
     }
 
     private fun selectStall(): Stall? {
-        println("========= Select Stall =========")
+        printHeader("PaardenWiskunde")
 
         Stable.stalls.forEachIndexed { index, stall ->
             println("${index + 1}. ${stall.name}")
@@ -37,7 +37,7 @@ object TUI {
             }
             in 1..Stable.stalls.size -> Stable.getStall(choice - 1)
             else -> {
-                println("InvalidOption")
+                println("Invalid Option")
                 selectStall()
             }
         }
@@ -45,25 +45,24 @@ object TUI {
 
     private fun stallMenu(stall: Stall) {
         while (true) {
-            println("========= ${stall.name} =========")
+            printHeader("${stall.name}'s Stall")
             println("1. Inspect horses")
             println("2. Calculate feeding plan")
             println("3. Add horse")
             println("4. Remove horse")
             println("5. Rename horse")
             println("6. Level up horse")
-            println("7. Set material level limit")
             println("0. Back to stall selection")
 
-            when (readlnOrNull()?.trim()) {
-                "1" -> showHorses(stall)
-                "2" -> feedingPlan(stall)
-                "3" -> addHorse(stall)
-                "4" -> removeHorse(stall)
-                "5" -> renameHorse(stall)
-                "6" -> levelHorse(stall)
-                "7" -> setMaterialLevel(stall)
-                "0" -> return
+            val choice = inputRequiredInt("Select option:")
+            when (choice) {
+                1 -> showHorses(stall)
+                2 -> feedingPlan(stall)
+                3 -> addHorse(stall)
+                4 -> removeHorse(stall)
+                5 -> renameHorse(stall)
+                6 -> levelHorse(stall)
+                0 -> return
 
                 else -> println("Invalid option")
 
@@ -72,13 +71,18 @@ object TUI {
     }
 
     private fun showHorses(stall: Stall) {
-        println("========= Horses =========")
+        printHeader("${stall.name}'s Horses")
+        if (stall.horseCount == 0) {
+            println("No horses in this stall")
+            return
+        }
         println(stall)
     }
 
     private fun feedingPlan(stall: Stall) {
         val horse = selectHorse(stall)?: return
-        val plan = stall.feedingPlan(horse)
+        val maxTier = inputRequiredInt("Enter max tier (0 for highest possible):")
+        val plan = stall.feedingPlan(horse, maxTier)
 
         println("Feeding plan for ${horse.name}:")
         val formattedPlan = formatPlan(plan)
@@ -122,7 +126,7 @@ object TUI {
     }
 
     private fun levelHorse(stall: Stall) {
-        println("=== Level up horse ===")
+        printHeader("Level up horse")
         val horse = selectHorse(stall)?: return
         val newLevels = horse.stats.keys.associateWith { type ->
             inputRequiredInt("What is the new ${type.name} level?")
@@ -130,18 +134,10 @@ object TUI {
         stall.levelHorse(horse, newLevels).forEach { println(it) }
     }
 
-    private fun setMaterialLevel(stall: Stall) {
-        while (true) {
-            val error = stall.setMaterialTier(
-                inputRequiredInt("Enter material tier:"))
-            if (error != null) println(error) else return
-        }
-    }
-
     private fun selectHorse(stall: Stall): Horse? {
         while (true) {
             showHorses(stall)
-            println("Enter horse index: (enter to go back)")
+            print("Enter horse index (enter to go back):")
             val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return null
             if (index !in 1..stall.horseCount) {
                 println("Invalid index, try again")
@@ -170,7 +166,7 @@ object TUI {
 
     private fun inputRequiredInt(prompt: String): Int {
         while (true) {
-            println(prompt)
+            print("$prompt ")
 
             val value = readlnOrNull()
                 ?.trim()
@@ -194,5 +190,10 @@ object TUI {
             }
             println("Please enter a valid number between 0 and ${maxAmount.coerceAtMost(5)}.")
         }
+    }
+
+    private fun printHeader(title: String, width: Int = 40) {
+        val padding = (width - title.length) / 2
+        println("${"=".repeat(padding)} $title ${"=".repeat(width - padding - title.length)}")
     }
 }
