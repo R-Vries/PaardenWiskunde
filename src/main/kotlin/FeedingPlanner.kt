@@ -4,19 +4,15 @@ import kotlin.collections.component2
 class FeedingPlanner(
     private val materials: List<Material>
 ) {
-    private var maxTier = 1
 
-    private val currentMaterials: List<Material>
-        get() = materials.filter { it.tier == maxTier }
-
-    fun calculatePlan(horse: Horse): List<Material> {
-        val bestMaterials = currentMaterials
-            .filter { it.tier <= horse.highestStat() }
+    fun calculatePlan(horse: Horse, maxTier: Int): List<Material> {
+        // maxTier = 0 means no limit
+        val bestMaterials = materials
+            .filter { it.tier <= horse.highestStat() && (maxTier == 0 || it.tier <= maxTier) }
             .let { filtered ->
                 val max = filtered.maxBy { it.tier }
                 filtered.filter { it.tier == max.tier}
             }
-
         return calculatePlanBfs(horse, bestMaterials)
     }
 
@@ -42,18 +38,6 @@ class FeedingPlanner(
             }
         }
         return emptyList()
-    }
-
-    fun setMaterialTier(tier: Int): String? {
-        return when {
-            tier % 10 != 0 && tier != 1 -> "Material tier must be 1 or a multiple of 10."
-            tier > MaterialRepository.maxTier -> "Material tier cannot exceed ${MaterialRepository.maxTier}."
-            tier < 0 -> "Material tier cannot be negative."
-            else -> {
-                maxTier = tier
-                null
-            }
-        }
     }
 }
 

@@ -12,11 +12,8 @@ class Stall(
     @Transient
     private val calculator = FeedingPlanner(MaterialRepository.materials)
 
-    fun setMaterialTier(tier: Int): String? =
-        calculator.setMaterialTier(tier)
-
-    fun feedingPlan(horse: Horse): List<Material> =
-        calculator.calculatePlan(horse)
+    fun feedingPlan(horse: Horse, maxTier: Int): List<Material> =
+        calculator.calculatePlan(horse, maxTier)
             .let { list -> list.sortedBy { material -> list.indexOf(material)}}
 
     fun executePlan(horse: Horse, plan: List<Material>) = plan.forEach { horse.feed(it)}
