@@ -148,7 +148,7 @@ object TUI {
     }
 
     private fun inputStat(name: String): Stat {
-        println("Enter $name level (empty = 1):")
+        print("Enter $name level (empty = 1): ")
         val level = readlnOrNull()?.trim()
             ?.takeIf { it.isNotEmpty() }
             ?.toIntOrNull()
