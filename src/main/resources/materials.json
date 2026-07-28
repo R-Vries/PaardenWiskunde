@@ -338,5 +338,210 @@
       "ACCELERATION": 6,
       "ENERGY": 16
     }
+  },
+    {
+      "name": "Silver Ingot",
+      "tier": 50,
+      "stats": {
+        "ENERGY": 7,
+        "TOUGHNESS": 18
+      }
+    },
+    {
+      "name": "Silver Gem",
+      "tier": 50,
+      "stats": {
+        "SPEED": 8,
+        "ENERGY": 4,
+        "TRAINING": 14
+      }
+    },
+    {
+      "name": "Jungle Plank",
+      "tier": 50,
+      "stats": {
+        "SPEED": 4,
+        "ACCELERATION": 14,
+        "TOUGHNESS": 8
+      }
+    },
+    {
+      "name": "Jungle Paper",
+      "tier": 50,
+      "stats": {
+        "ALTITUDE": 18,
+        "BOOST": 7
+      }
+    },
+    {
+      "name": "Rye String",
+      "tier": 50,
+      "stats": {
+        "ACCELERATION": 4,
+        "HANDLING": 8,
+        "BOOST": 14
+      }
+    },
+    {
+      "name": "Rye Grains",
+      "tier": 50,
+      "stats": {
+        "SPEED": 18,
+        "ALTITUDE": 7
+      }
+    },
+    {
+      "name": "Piranha Oil",
+      "tier": 50,
+      "stats": {
+        "ALTITUDE": 4,
+        "HANDLING": 14,
+        "TRAINING": 8
+      }
+    },
+    {
+      "name": "Piranha Meat",
+      "tier": 50,
+      "stats": {
+        "ACCELERATION": 7,
+        "ENERGY": 18
+      }
+    },
+  {
+    "name": "Cobalt Ingot",
+    "tier": 60,
+    "stats": {
+      "ENERGY": 8,
+      "TOUGHNESS": 50
+    }
+  },
+  {
+    "name": "Cobalt Gem",
+    "tier": 60,
+    "stats": {
+      "SPEED": 9,
+      "ENERGY": 4,
+      "TRAINING": 15
+    }
+  },
+  {
+    "name": "Dark Plank",
+    "tier": 60,
+    "stats": {
+      "SPEED": 4,
+      "ACCELERATION": 15,
+      "TOUGHNESS": 9
+    }
+  },
+  {
+    "name": "Dark Paper",
+    "tier": 60,
+    "stats": {
+      "ALTITUDE": 50,
+      "BOOST": 8
+    }
+  },
+  {
+    "name": "Millet String",
+    "tier": 60,
+    "stats": {
+      "ACCELERATION": 4,
+      "HANDLING": 9,
+      "BOOST": 15
+    }
+  },
+  {
+    "name": "Millet Grains",
+    "tier": 60,
+    "stats": {
+      "SPEED": 20,
+      "ALTITUDE": 8
+    }
+  },
+  {
+    "name": "Koi Oil",
+    "tier": 60,
+    "stats": {
+      "ALTITUDE": 4,
+      "HANDLING": 15,
+      "TRAINING": 9
+    }
+  },
+  {
+    "name": "Koi Meat",
+    "tier": 60,
+    "stats": {
+      "ACCELERATION": 8,
+      "ENERGY": 20
+    }
+  },
+  {
+    "name": "Kanderstone Ingot",
+    "tier": 70,
+    "stats": {
+      "ENERGY": 8,
+      "TOUGHNESS": 22
+    }
+  },
+  {
+    "name": "Kanderstone Gem",
+    "tier": 70,
+    "stats": {
+      "SPEED": 10,
+      "ENERGY": 4,
+      "TRAINING": 17
+    }
+  },
+  {
+    "name": "Light Plank",
+    "tier": 70,
+    "stats": {
+      "SPEED": 4,
+      "ACCELERATION": 17,
+      "TOUGHNESS": 10
+    }
+  },
+  {
+    "name": "Light Paper",
+    "tier": 70,
+    "stats": {
+      "ALTITUDE": 22,
+      "BOOST": 8
+    }
+  },
+  {
+    "name": "Decay String",
+    "tier": 70,
+    "stats": {
+      "ACCELERATION": 4,
+      "HANDLING": 10,
+      "BOOST": 17
+    }
+  },
+  {
+    "name": "Decay Grains",
+    "tier": 70,
+    "stats": {
+      "SPEED": 22,
+      "ALTITUDE": 8
+    }
+  },
+  {
+    "name": "Gylia Oil",
+    "tier": 70,
+    "stats": {
+      "ALTITUDE": 4,
+      "HANDLING": 17,
+      "TRAINING": 10
+    }
+  },
+  {
+    "name": "Gylia Meat",
+    "tier": 70,
+    "stats": {
+      "ACCELERATION": 8,
+      "ENERGY": 22
+    }
   }
+
 ]

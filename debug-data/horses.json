@@ -99,42 +99,42 @@
                 "stats": {
                     "SPEED": {
                         "level": 40,
-                        "limit": 40,
+                        "limit": 50,
                         "max": 50
                     },
                     "ACCELERATION": {
-                        "level": 29,
-                        "limit": 45,
+                        "level": 50,
+                        "limit": 57,
                         "max": 60
                     },
                     "ALTITUDE": {
-                        "level": 34,
-                        "limit": 44,
+                        "level": 50,
+                        "limit": 54,
                         "max": 54
                     },
                     "ENERGY": {
-                        "level": 33,
-                        "limit": 40,
+                        "level": 43,
+                        "limit": 43,
                         "max": 50
                     },
                     "HANDLING": {
-                        "level": 28,
-                        "limit": 38,
+                        "level": 40,
+                        "limit": 47,
                         "max": 47
                     },
                     "TOUGHNESS": {
-                        "level": 22,
-                        "limit": 33,
+                        "level": 40,
+                        "limit": 40,
                         "max": 40
                     },
                     "BOOST": {
-                        "level": 35,
-                        "limit": 48,
+                        "level": 40,
+                        "limit": 60,
                         "max": 60
                     },
                     "TRAINING": {
-                        "level": 30,
-                        "limit": 40,
+                        "level": 40,
+                        "limit": 50,
                         "max": 50
                     }
                 },
