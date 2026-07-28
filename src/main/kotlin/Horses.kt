@@ -10,6 +10,7 @@ data class Horse(
     var name: String,
     val stats: MutableMap<StatType, Stat> = defaultStats
 ) {
+    val potency: Int = stats.values.sumOf { it.max }
     /** Increase each stat's limit by the amount specified by the material */
     fun feed(material: Material) {
         material.stats.forEach { (type, amount) ->
@@ -17,15 +18,11 @@ data class Horse(
         }
     }
 
-    fun lowestStat(): StatType =
-        stats.maxBy { (_, stat) -> stat.max - stat.limit }.key
-
     fun isMaxed(): Boolean = stats.all { (_, stat) -> stat.limit == stat.max }
-
 
     override fun toString(): String {
         return buildString {
-            appendLine(name)
+            appendLine("$name ($potency) ${if (isMaxed()) "(max)" else ""}")
 
             stats.forEach { (type, stat) ->
                 appendLine(

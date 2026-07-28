@@ -45,7 +45,8 @@
                         "limit": 10,
                         "max": 30
                     }
-                }
+                },
+                "potency": 240
             },
             {
                 "name": "Bart",
@@ -90,7 +91,8 @@
                         "limit": 10,
                         "max": 30
                     }
-                }
+                },
+                "potency": 240
             },
             {
                 "name": "Joost",
@@ -135,7 +137,54 @@
                         "limit": 40,
                         "max": 50
                     }
-                }
+                },
+                "potency": 411
+            },
+            {
+                "name": "max horse",
+                "stats": {
+                    "SPEED": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "ACCELERATION": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "ALTITUDE": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "ENERGY": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "HANDLING": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "TOUGHNESS": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "BOOST": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    },
+                    "TRAINING": {
+                        "level": 1,
+                        "limit": 1,
+                        "max": 1
+                    }
+                },
+                "potency": 8
             }
         ]
     },
