@@ -48,4 +48,23 @@ class Stall(
             "${index + 1}. $horse"
         }.joinToString("\n")
     }
+
+    fun validateFeedAmount(amount: Int, availableFeed: Int): FeedValidation {
+        return when {
+            amount < 0 ->
+                FeedValidation.Invalid("Amount must be positive")
+            amount > availableFeed ->
+                FeedValidation.Invalid("Not enough food available")
+            amount > feedingSlots ->
+                FeedValidation.Warning("You can only fit $feedingSlots items in the feeding slots at once.")
+            else -> FeedValidation.Valid
+        }
+    }
+}
+
+
+sealed interface FeedValidation {
+    data object Valid : FeedValidation
+    data class Warning(val message: String) : FeedValidation
+    data class Invalid(val message: String) : FeedValidation
 }

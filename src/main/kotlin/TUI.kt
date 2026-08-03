@@ -3,12 +3,9 @@ import kotlin.text.ifEmpty
 
 object TUI {
     fun start() {
-        println(
-            if (AppConfig.isDevelopment)
-                "Running in DEVELOPMENT mode"
-            else
-                "Running in PRODUCTION mode"
-        )
+        if (AppConfig.isDevelopment) {
+            println("Running in DEVELOPMENT mode")
+        }
         StableRepository.load()
         while (true) {
             val stall = selectStall() ?: break
@@ -98,11 +95,9 @@ object TUI {
     }
 
     private fun addHorse(stall: Stall) {
-        println("Enter horse name:")
-        val name = readlnOrNull()?.trim().orEmpty().ifEmpty { "Horse #${stall.horseCount + 1}" }
+        val name = inputRequiredString("Enter horse name:").ifEmpty { "Horse #${stall.horseCount + 1}" }
 
-        println("Press 1 for default stats, 2 for custom stats")
-        when (readlnOrNull()?.trim()) {
+        when (inputRequiredString("Press 1 for default stats, 2 for custom stats:")) {
             "1" -> stall.add(Horse(name))
             "2" -> {
                 val stats = StatType.entries.associateWith { type ->
@@ -121,8 +116,8 @@ object TUI {
 
     private fun renameHorse(stall: Stall) {
         val horse = selectHorse(stall)
-        println("Enter the new name: ")
-        horse?.rename(readlnOrNull()?.trim().orEmpty().ifEmpty { horse.name })
+        val newName = inputRequiredString("Enter the new name:")
+        horse?.rename(newName.ifEmpty { horse.name })
     }
 
     private fun levelHorse(stall: Stall) {
@@ -137,8 +132,10 @@ object TUI {
     private fun selectHorse(stall: Stall): Horse? {
         while (true) {
             showHorses(stall)
-            print("Enter horse index (enter to go back):")
-            val index = readlnOrNull()?.trim()?.toIntOrNull() ?: return null
+            val index = inputRequiredString("Enter horse index (enter to go back):")
+                .trim()
+                .toIntOrNull()
+                ?: return null
             if (index !in 1..stall.horseCount) {
                 println("Invalid index, try again")
                 continue
@@ -180,24 +177,29 @@ object TUI {
         }
     }
 
-    private fun askFeedAmount(stall: Stall, maxAmount: Int): Int {
+    private fun inputRequiredString(prompt: String): String {
+        print("$prompt ")
+        return readlnOrNull()?.trim() ?: ""
+    }
+
+    private fun askFeedAmount(stall: Stall, availableFood: Int): Int {
         while (true) {
-            print("How many items do you want to feed? ")
-            val amount = readlnOrNull()?.trim()?.toIntOrNull()
+            val amount = inputRequiredInt("How many items do you want to feed?")
 
-            if (amount == null || amount !in 0..maxAmount) {
-                println("Please enter a valid number between 0 and $maxAmount.")
-                continue
-            }
+            when (val validation = stall.validateFeedAmount(amount, availableFood)) {
+                FeedValidation.Valid -> return amount
 
-            if (amount > stall.feedingSlots) {
-                println("Are you sure you want to feed $amount items? (y/n)")
-                if (readlnOrNull()?.trim()?.lowercase() != "y") {
-                    continue
+                is FeedValidation.Invalid -> {
+                    println(validation.message)
+                }
+
+                is FeedValidation.Warning -> {
+                    println(validation.message)
+                    if (inputRequiredString("Continue? (y/n)").lowercase() == "y") {
+                        return amount
+                    }
                 }
             }
-
-            return amount
         }
     }
 
