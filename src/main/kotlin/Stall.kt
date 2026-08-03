@@ -4,7 +4,8 @@ import kotlinx.serialization.Transient
 @Serializable
 class Stall(
     val name: String,
-    private val horses: MutableList<Horse> = mutableListOf()
+    private val horses: MutableList<Horse> = mutableListOf(),
+    val feedingSlots: Int = 5
 ) {
     val horseCount: Int
         get() = horses.size

@@ -88,7 +88,7 @@ object TUI {
         val formattedPlan = formatPlan(plan)
         println(formattedPlan)
 
-        val amount = askFeedAmount(plan.size)
+        val amount = askFeedAmount(stall, plan.size)
         val selectedFood = plan.take(amount)
             .joinToString(", ") { it.name }
             .ifEmpty { "nothing" }
@@ -180,15 +180,24 @@ object TUI {
         }
     }
 
-    private fun askFeedAmount(maxAmount: Int): Int {
+    private fun askFeedAmount(stall: Stall, maxAmount: Int): Int {
         while (true) {
-            println("How many items do you want to feed?")
+            print("How many items do you want to feed? ")
             val amount = readlnOrNull()?.trim()?.toIntOrNull()
 
-            if (amount != null && amount in 0..maxAmount.coerceAtMost(5)) {
-                return amount
+            if (amount == null || amount !in 0..maxAmount) {
+                println("Please enter a valid number between 0 and $maxAmount.")
+                continue
             }
-            println("Please enter a valid number between 0 and ${maxAmount.coerceAtMost(5)}.")
+
+            if (amount > stall.feedingSlots) {
+                println("Are you sure you want to feed $amount items? (y/n)")
+                if (readlnOrNull()?.trim()?.lowercase() != "y") {
+                    continue
+                }
+            }
+
+            return amount
         }
     }
 
