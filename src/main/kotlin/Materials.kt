@@ -15,8 +15,6 @@ enum class StatType {
 object MaterialRepository {
     val materials = loadMaterials()
 
-    val maxTier = materials.maxOf { it.tier }
-
     private fun loadMaterials(): List<Material> = Json.decodeFromString<List<Material>>(
         object {}.javaClass
             .getResourceAsStream("/materials.json")!!
