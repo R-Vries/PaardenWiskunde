@@ -6,7 +6,10 @@ plugins {
 }
 
 group = "nl.sgvtegel"
-version = "1.0"
+version = "1.0.0"
+val appName = "PaardenWiskunde"
+
+val serializationVersion = "1.11.0"
 
 repositories {
     mavenCentral()
@@ -14,7 +17,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 }
 
 tasks.test {
@@ -29,24 +32,24 @@ application {
 }
 
 // Necessary to allow input in the terminal
-tasks.withType<JavaExec>() {
+tasks.withType<JavaExec> {
     standardInput = System.`in`
 }
 
 tasks.register<Copy>("deploy") {
     description = "Builds the shadow jar to the Apps directory"
     group = "distribution"
-    dependsOn("clean", "shadowJar")
+    dependsOn("shadowJar")
 
-    from("build/libs/PaardenWiskunde-1.0-all.jar") {
+    from("build/libs/$appName-$version-all.jar") {
         rename {
-            "PaardenWiskunde.jar"
+            "$appName.jar"
         }
     }
 
-    from("distribution/PaardenWiskunde.bat")
+    from("distribution/$appName.bat")
 
-    into("${System.getProperty("user.home")}/AppData/Local/PaardenWiskunde")
+    into("${System.getProperty("user.home")}/AppData/Local/$appName")
 }
 
 tasks.named<JavaExec>("run") {
@@ -54,10 +57,17 @@ tasks.named<JavaExec>("run") {
 }
 
 tasks.register<Exec>("packageInstaller") {
-    dependsOn("clean", "shadowJar")
+    dependsOn("shadowJar")
 
     description = "Builds the installer for Windows"
     group = "distribution"
+
+    val installerDir = layout.buildDirectory.dir("installer").get().asFile
+
+    doFirst {
+        delete(installerDir)
+        installerDir.mkdirs()
+    }
 
     val jpackage = File(
         System.getProperty("java.home"),
@@ -69,20 +79,25 @@ tasks.register<Exec>("packageInstaller") {
         "--input",
         layout.buildDirectory.dir("libs").get().asFile.absolutePath,
         "--main-jar",
-        "PaardenWiskunde-1.0-all.jar",
+        "$appName-$version-all.jar",
         "--main-class",
         "MainKt",
         "--name",
-        "PaardenWiskunde",
+        appName,
         "--type",
         "exe",
         "--dest",
         layout.buildDirectory.dir("installer").get().asFile.absolutePath,
         "--win-console",
         "--win-menu",
+        "--win-per-user-install",
+        "--win-menu-group",
+        appName,
         "--icon",
         file("src/main/distribution/PaardenWiskunde.ico"),
         "--vendor",
-        "r-vries"
+        "r-vries",
+        "--app-version",
+        version.toString()
     )
 }
