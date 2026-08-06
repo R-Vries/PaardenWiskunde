@@ -79,6 +79,8 @@ tasks.register<Exec>("packageInstaller") {
         "--dest",
         layout.buildDirectory.dir("installer").get().asFile.absolutePath,
         "--win-console",
-        "--win-menu"
+        "--win-menu",
+        "--icon",
+        file("src/main/distribution/PaardenWiskunde.ico")
     )
 }
