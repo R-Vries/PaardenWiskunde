@@ -52,3 +52,32 @@ tasks.register<Copy>("deploy") {
 tasks.named<JavaExec>("run") {
     systemProperty("app.mode", "development")
 }
+
+tasks.register<Exec>("packageInstaller") {
+    dependsOn("shadowJar")
+
+    description = "Builds the installer for Windows"
+    group = "distribution"
+
+    val jpackage = File(
+        System.getProperty("java.home"),
+        "bin/jpackage.exe"
+    )
+
+    commandLine(
+        jpackage.absolutePath,
+        "--input",
+        layout.buildDirectory.dir("libs").get().asFile.absolutePath,
+        "--main-jar",
+        "PaardenWiskunde-1.0-SNAPSHOT-all.jar",
+        "--main-class",
+        "MainKt",
+        "--name",
+        "PaardenWiskunde",
+        "--type",
+        "app-image",
+        "--dest",
+        layout.buildDirectory.dir("installer").get().asFile.absolutePath,
+        "--win-console"
+    )
+}
