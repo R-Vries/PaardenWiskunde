@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "nl.sgvtegel"
-version = "1.0.0"
+version = "1.1.0"
 val appName = "PaardenWiskunde"
 
 val serializationVersion = "1.11.0"
