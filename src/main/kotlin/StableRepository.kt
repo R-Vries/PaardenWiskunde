@@ -5,17 +5,22 @@ object StableRepository {
 
     fun load(): String {
         if (!saveFile.exists()) {
-            return "No saved horses found, creating new file"
+            saveFile.parentFile.mkdirs()
+            saveFile.writeText("[]")
+            Stable.import("[]")
+            return "No saved horses found, created ${saveFile.absolutePath}"
         }
-        try {
+
+        return try {
             Stable.import(saveFile.readText())
-            return "Successfully loaded horses from ${saveFile.absolutePath}"
+            "Successfully loaded horses from ${saveFile.absolutePath}"
         } catch (e: Exception) {
-            return "Could not load horses: ${e.message}"
+            "Could not load horses: ${e.message}"
         }
     }
 
     fun save() {
+        saveFile.parentFile.mkdirs()
         saveFile.writeText(Stable.getJson())
         println("Saved horses to ${saveFile.absolutePath}")
     }

@@ -75,9 +75,10 @@ tasks.register<Exec>("packageInstaller") {
         "--name",
         "PaardenWiskunde",
         "--type",
-        "app-image",
+        "exe",
         "--dest",
         layout.buildDirectory.dir("installer").get().asFile.absolutePath,
-        "--win-console"
+        "--win-console",
+        "--win-menu"
     )
 }
