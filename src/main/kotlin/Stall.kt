@@ -11,7 +11,7 @@ class Stall(
         get() = horses.size
 
     @Transient
-    private val calculator = FeedingPlanner(MaterialRepository.materials)
+    val calculator = FeedingPlanner(MaterialRepository.materials)
 
     fun feedingPlan(horse: Horse, maxTier: Int): List<Material> =
         calculator.calculatePlan(horse, maxTier)

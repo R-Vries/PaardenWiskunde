@@ -1,5 +1,6 @@
 import kotlin.collections.take
 import kotlin.text.ifEmpty
+import kotlin.time.measureTimedValue
 
 object TUI {
     fun start() {
@@ -79,11 +80,26 @@ object TUI {
     private fun feedingPlan(stall: Stall) {
         val horse = selectHorse(stall)?: return
         val maxTier = inputRequiredInt("Enter max tier (0 for highest possible):")
-        val plan = stall.feedingPlan(horse, maxTier)
+
+        val (plan, duration) = measureTimedValue {
+            stall.feedingPlan(horse, maxTier)
+        }
+
+        if (AppConfig.isDevelopment) {
+            with(stall.calculator.lastSearchStats) {
+                println()
+                println("=== Search statistics ===")
+                println("Plan calculated in ${duration.inWholeMilliseconds} ms")
+                println("Expanded states : $expandedStates")
+                println("Generated      : $generatedStates")
+                println("Duplicate      : $duplicateStates")
+                println("Max queue size : $maxQueueSize")
+                println()
+            }
+        }
 
         println("Feeding plan for ${horse.name}:")
-        val formattedPlan = formatPlan(plan)
-        println(formattedPlan)
+        println(formatPlan(plan))
 
         val amount = askFeedAmount(stall, plan.size)
         val selectedFood = plan.take(amount)
