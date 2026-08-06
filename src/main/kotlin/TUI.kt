@@ -49,7 +49,7 @@ object TUI {
             println("3. Add horse")
             println("4. Remove horse")
             println("5. Rename horse")
-            println("6. Level up horse")
+            println("6. Edit horse")
             println("0. Back to stall selection")
 
             val choice = inputRequiredInt("Select option:")
@@ -59,7 +59,7 @@ object TUI {
                 3 -> addHorse(stall)
                 4 -> removeHorse(stall)
                 5 -> renameHorse(stall)
-                6 -> levelHorse(stall)
+                6 -> editHorse(stall)
                 0 -> return
 
                 else -> println("Invalid option")
@@ -136,13 +136,73 @@ object TUI {
         horse?.rename(newName.ifEmpty { horse.name })
     }
 
-    private fun levelHorse(stall: Stall) {
-        printHeader("Level up horse")
+    private fun editHorse(stall: Stall) {
         val horse = selectHorse(stall)?: return
-        val newLevels = horse.stats.keys.associateWith { type ->
-            inputRequiredInt("What is the new ${type.name} level?")
+
+        while (true) {
+            printHeader("Edit ${horse.name}")
+            StatType.entries.forEachIndexed { index, type ->
+                val stat = horse.stats.getValue(type)
+
+                println(
+                    "${index + 1}. ${type.name.padEnd(15)}" +
+                            "${stat.level}/${stat.limit}/${stat.max}"
+                )
+            }
+            println("0. Back")
+
+            val choice = inputRequiredInt("Select stat:")
+
+            if (choice == 0) return
+            if (choice !in 1..StatType.entries.size) {
+                println("Invalid option")
+                continue
+            }
+            val type = StatType.entries[choice - 1]
+            editStat(horse, type)
         }
-        stall.levelHorse(horse, newLevels).forEach { println(it) }
+    }
+
+    private fun editStat(horse: Horse, type: StatType) {
+        while (true) {
+            val stat = horse.stats.getValue(type)
+
+            println()
+            println("=== ${type.name} ===")
+            println("1. Level: ${stat.level}")
+            println("2. Limit: ${stat.limit}")
+            println("3. Max:   ${stat.max}")
+            println("0. Back")
+
+            val result = when (inputRequiredInt("Choose a value to edit:")) {
+                1 -> stat.updateLevel(
+                    inputRequiredInt("Enter new level:")
+                )
+
+                2 -> stat.updateLimit(
+                    inputRequiredInt("Enter new limit:")
+                )
+
+                3 -> stat.updateMax(
+                    inputRequiredInt("Enter new max:")
+                )
+
+                0 -> return
+
+                else -> {
+                    println("Invalid choice.")
+                    continue
+                }
+            }
+
+            when (result) {
+                UpdateResult.Success ->
+                    println("${type.name} updated.")
+
+                is UpdateResult.Error ->
+                    println("Could not update ${type.name}: ${result.message}")
+            }
+        }
     }
 
     private fun selectHorse(stall: Stall): Horse? {

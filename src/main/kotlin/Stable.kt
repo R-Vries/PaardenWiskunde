@@ -14,7 +14,7 @@ object Stable {
     }
 
     fun import(json: String) {
-        // import the stalls from json (a list of stalls which are lists of horses)
+        // import the stalls from JSON (a list of stalls which are lists of horses)
         stalls.addAll(Json.decodeFromString<List<Stall>>(json))
     }
 
