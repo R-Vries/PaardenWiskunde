@@ -185,6 +185,52 @@
                     }
                 },
                 "potency": 8
+            },
+            {
+                "name": "ASTAR",
+                "stats": {
+                    "SPEED": {
+                        "level": 1,
+                        "limit": 34,
+                        "max": 65
+                    },
+                    "ACCELERATION": {
+                        "level": 1,
+                        "limit": 33,
+                        "max": 70
+                    },
+                    "ALTITUDE": {
+                        "level": 1,
+                        "limit": 60,
+                        "max": 70
+                    },
+                    "ENERGY": {
+                        "level": 1,
+                        "limit": 29,
+                        "max": 59
+                    },
+                    "HANDLING": {
+                        "level": 1,
+                        "limit": 33,
+                        "max": 65
+                    },
+                    "TOUGHNESS": {
+                        "level": 1,
+                        "limit": 35,
+                        "max": 66
+                    },
+                    "BOOST": {
+                        "level": 1,
+                        "limit": 34,
+                        "max": 59
+                    },
+                    "TRAINING": {
+                        "level": 1,
+                        "limit": 30,
+                        "max": 44
+                    }
+                },
+                "potency": 498
             }
         ],
         "feedingSlots": 5
