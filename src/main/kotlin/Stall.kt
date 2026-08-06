@@ -19,10 +19,6 @@ class Stall(
 
     fun executePlan(horse: Horse, plan: List<Material>) = plan.forEach { horse.feed(it)}
 
-    //ugly that this gets a horse. Maybe an index is better? Causes changes everywhere that selectHorse is used...
-    fun levelHorse(horse: Horse, newLevels: Map<StatType, Int>): List<String> =
-        horse.levelUp(newLevels)
-
     fun add(horse: Horse) {
         horses.add(horse)
     }
