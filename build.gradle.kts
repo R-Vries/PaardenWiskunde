@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "nl.sgvtegel"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -38,7 +38,7 @@ tasks.register<Copy>("deploy") {
     group = "distribution"
     dependsOn("clean", "shadowJar")
 
-    from("build/libs/PaardenWiskunde-1.0-SNAPSHOT-all.jar") {
+    from("build/libs/PaardenWiskunde-1.0-all.jar") {
         rename {
             "PaardenWiskunde.jar"
         }
@@ -51,4 +51,38 @@ tasks.register<Copy>("deploy") {
 
 tasks.named<JavaExec>("run") {
     systemProperty("app.mode", "development")
+}
+
+tasks.register<Exec>("packageInstaller") {
+    dependsOn("clean", "shadowJar")
+
+    description = "Builds the installer for Windows"
+    group = "distribution"
+
+    val jpackage = File(
+        System.getProperty("java.home"),
+        "bin/jpackage.exe"
+    )
+
+    commandLine(
+        jpackage.absolutePath,
+        "--input",
+        layout.buildDirectory.dir("libs").get().asFile.absolutePath,
+        "--main-jar",
+        "PaardenWiskunde-1.0-all.jar",
+        "--main-class",
+        "MainKt",
+        "--name",
+        "PaardenWiskunde",
+        "--type",
+        "exe",
+        "--dest",
+        layout.buildDirectory.dir("installer").get().asFile.absolutePath,
+        "--win-console",
+        "--win-menu",
+        "--icon",
+        file("src/main/distribution/PaardenWiskunde.ico"),
+        "--vendor",
+        "r-vries"
+    )
 }

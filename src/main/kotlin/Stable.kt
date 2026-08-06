@@ -9,7 +9,7 @@ object Stable {
 
     fun addStall(name: String): Stall {
         val stall = Stall(name)
-        stalls.add(Stall(name))
+        stalls.add(stall)
         return stall
     }
 
