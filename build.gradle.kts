@@ -81,6 +81,8 @@ tasks.register<Exec>("packageInstaller") {
         "--win-console",
         "--win-menu",
         "--icon",
-        file("src/main/distribution/PaardenWiskunde.ico")
+        file("src/main/distribution/PaardenWiskunde.ico"),
+        "--vendor",
+        "r-vries"
     )
 }
