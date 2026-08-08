@@ -36,22 +36,6 @@ tasks.withType<JavaExec> {
     standardInput = System.`in`
 }
 
-tasks.register<Copy>("deploy") {
-    description = "Builds the shadow jar to the Apps directory"
-    group = "distribution"
-    dependsOn("shadowJar")
-
-    from("build/libs/$appName-$version-all.jar") {
-        rename {
-            "$appName.jar"
-        }
-    }
-
-    from("distribution/$appName.bat")
-
-    into("${System.getProperty("user.home")}/AppData/Local/$appName")
-}
-
 tasks.named<JavaExec>("run") {
     systemProperty("app.mode", "development")
 }
@@ -94,7 +78,7 @@ tasks.register<Exec>("packageInstaller") {
         "--win-menu-group",
         appName,
         "--icon",
-        file("src/main/distribution/PaardenWiskunde.ico"),
+        file("distribution/PaardenWiskunde.ico"),
         "--vendor",
         "r-vries",
         "--app-version",
