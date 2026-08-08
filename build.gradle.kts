@@ -28,7 +28,7 @@ kotlin {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("app.MainKt")
 }
 
 // Necessary to allow input in the terminal
@@ -65,7 +65,7 @@ tasks.register<Exec>("packageInstaller") {
         "--main-jar",
         "$appName-$version-all.jar",
         "--main-class",
-        "MainKt",
+        "app.MainKt",
         "--name",
         appName,
         "--type",

@@ -1,0 +1,5 @@
+package domain.stat
+
+enum class StatType {
+    SPEED, ACCELERATION, ALTITUDE, ENERGY, HANDLING, TOUGHNESS, BOOST, TRAINING
+}

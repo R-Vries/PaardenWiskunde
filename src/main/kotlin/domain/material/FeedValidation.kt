@@ -1,3 +1,5 @@
+package domain.material
+
 /**
  * Represents the result of a validation check on the amount of food to be fed.
  */

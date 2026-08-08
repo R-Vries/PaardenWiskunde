@@ -1,3 +1,6 @@
+package app
+
+import ui.TUI
 import java.io.File
 
 fun main() {

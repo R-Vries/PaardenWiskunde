@@ -1,5 +1,16 @@
+package domain.stable
+
+import data.MaterialRepository.materials
+import domain.horse.Horse
+import domain.horse.Stat
+import domain.horse.StatField
+import domain.horse.UpdateResult
+import domain.material.FeedValidation
+import domain.material.Material
+import domain.stat.StatType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import planner.FeedingPlanner
 
 /**
  * Stall containing multiple horses. Contains functions for all operations related to horses.
@@ -19,7 +30,7 @@ class Stall(
         get() = horses.size
 
     @Transient
-    val feedingPlanner = FeedingPlanner(MaterialRepository.materials)
+    val feedingPlanner = FeedingPlanner(materials)
 
     /**
      * Calculates a feeding plan for a given horse based on the provided maximum tier.
@@ -79,11 +90,11 @@ class Stall(
         value: Int
     ): UpdateResult {
         if (horse !in horses) {
-            return UpdateResult.Error("Horse does not belong to this stall.")
+            return UpdateResult.Error("domain.horse.Horse does not belong to this stall.")
         }
 
         val stat = horse.stats[type]
-            ?: return UpdateResult.Error("Stat not found.")
+            ?: return UpdateResult.Error("domain.horse.Stat not found.")
 
         return when (field) {
             StatField.LEVEL -> stat.updateLevel(value)
@@ -110,7 +121,7 @@ class Stall(
      * Warns the user if the amount exceeds the feeding slots.
      * @param amount The amount of food to be fed.
      * @param availableFood The available number of food items from the feeding plan.
-     * @return FeedValidation.Valid if the amount is valid, FeedValidation.Warning if the amount exceeds the feeding slots, FeedValidation.Invalid otherwise.
+     * @return domain.material.FeedValidation.Valid if the amount is valid, domain.material.FeedValidation.Warning if the amount exceeds the feeding slots, domain.material.FeedValidation.Invalid otherwise.
      */
     fun validateFeedAmount(amount: Int, availableFood: Int): FeedValidation {
         return when {

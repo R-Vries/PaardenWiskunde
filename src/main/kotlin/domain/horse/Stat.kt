@@ -1,3 +1,5 @@
+package domain.horse
+
 import kotlinx.serialization.Serializable
 
 @Serializable

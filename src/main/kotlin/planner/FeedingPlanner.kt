@@ -1,7 +1,7 @@
-import planner.SearchAlgorithm
-import planner.SearchStats
-import planner.calculatePlanAStar
-import planner.calculatePlanBfs
+package planner
+
+import domain.horse.Horse
+import domain.material.Material
 import kotlin.collections.component1
 import kotlin.collections.component2
 

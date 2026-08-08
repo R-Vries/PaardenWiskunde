@@ -1,4 +1,9 @@
+package domain.horse
+
+import domain.material.Material
+import domain.stat.StatType
 import kotlinx.serialization.Serializable
+import kotlin.collections.forEach
 
 @Serializable
 data class Horse(
