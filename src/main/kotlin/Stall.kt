@@ -33,21 +33,34 @@ class Stall(
             .let { list -> list.sortedBy { material -> list.indexOf(material)}}
 
     /**
+     * Adds a new horse to this stall
+     */
+    fun addHorse(horse: Horse) {
+        // no limit on the number of horses, since horses can also be tracked without having them in a stall in Wynn
+        horses.add(horse)
+    }
+
+    /**
+     * Removes a horse from the stall.
+     */
+    fun removeHorse(horse: Horse) {
+        horses.remove(horse)
+    }
+
+    /**
+     * Renames a horse in the stall.
+     */
+    fun renameHorse(horse: Horse, newName: String) {
+        horse.rename(newName)
+    }
+
+    /**
      * Executes a feeding plan by feeding the specified horse with the provided materials.
      *
      * @param horse The horse to be fed.
      * @param plan The list of materials to be fed to the horse.
      */
     fun executePlan(horse: Horse, plan: List<Material>) = plan.forEach { horse.feed(it)}
-
-
-    /**
-     * Adds a new horse to this stall
-     */
-    fun add(horse: Horse) {
-        // no limit on the number of horses, since horses can also be tracked without having them in a stall in Wynn
-        horses.add(horse)
-    }
 
     /**
      * Adds a new horse with the specified name and statistical attributes to the collection of horses.
@@ -56,15 +69,27 @@ class Stall(
      * @param stats A map where each key represents a type of stat (e.g., SPEED, ENERGY),
      * and the corresponding value indicates the detailed properties of that stat.
      */
-    fun add(name: String, stats: Map<StatType, Stat>) =
-        add(Horse(name, stats.toMutableMap()))
+    fun addHorse(name: String, stats: Map<StatType, Stat>) =
+        addHorse(Horse(name, stats.toMutableMap()))
 
+    fun updateHorseStat(
+        horse: Horse,
+        type: StatType,
+        field: StatField,
+        value: Int
+    ): UpdateResult {
+        if (horse !in horses) {
+            return UpdateResult.Error("Horse does not belong to this stall.")
+        }
 
-    /**
-     * Removes a horse from the stall.
-     */
-    fun remove(horse: Horse) {
-        horses.remove(horse)
+        val stat = horse.stats[type]
+            ?: return UpdateResult.Error("Stat not found.")
+
+        return when (field) {
+            StatField.LEVEL -> stat.updateLevel(value)
+            StatField.LIMIT -> stat.updateLimit(value)
+            StatField.MAX -> stat.updateMax(value)
+        }
     }
 
     /**
@@ -98,13 +123,4 @@ class Stall(
             else -> FeedValidation.Valid
         }
     }
-}
-
-/**
- * Represents the result of a validation check on the amount of food to be fed.
- */
-sealed interface FeedValidation {
-    data object Valid : FeedValidation
-    data class Warning(val message: String) : FeedValidation
-    data class Invalid(val message: String) : FeedValidation
 }

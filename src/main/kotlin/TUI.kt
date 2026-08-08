@@ -3,6 +3,8 @@ import kotlin.text.ifEmpty
 import kotlin.time.measureTimedValue
 
 object TUI {
+    private const val INVALID_OPTION = "Invalid option"
+
     fun start() {
         if (AppConfig.isDevelopment) {
             println("Running in DEVELOPMENT mode")
@@ -62,7 +64,7 @@ object TUI {
                 6 -> editHorse(stall)
                 0 -> return
 
-                else -> println("Invalid option")
+                else -> println(INVALID_OPTION)
 
             }
         }
@@ -114,33 +116,33 @@ object TUI {
         val name = inputRequiredString("Enter horse name:").ifEmpty { "Horse #${stall.horseCount + 1}" }
 
         when (inputRequiredString("Press 1 for default stats, 2 for custom stats:")) {
-            "1" -> stall.add(Horse(name))
+            "1" -> stall.addHorse(Horse(name))
             "2" -> {
                 val stats = StatType.entries.associateWith { type ->
                     inputStat(type.name.lowercase().replaceFirstChar { it.uppercase() })
                 }
-                stall.add(name, stats)
+                stall.addHorse(name, stats)
             }
         }
     }
 
-    /** 1-indexed remove function */
     private fun removeHorse(stall: Stall) {
         val horse = selectHorse(stall)?: return
-        stall.remove(horse)
+        stall.removeHorse(horse)
     }
 
     private fun renameHorse(stall: Stall) {
-        val horse = selectHorse(stall)
+        val horse = selectHorse(stall) ?: return
         val newName = inputRequiredString("Enter the new name:")
-        horse?.rename(newName.ifEmpty { horse.name })
+        stall.renameHorse(horse, newName)
     }
 
     private fun editHorse(stall: Stall) {
-        val horse = selectHorse(stall)?: return
+        val horse = selectHorse(stall) ?: return
 
         while (true) {
             printHeader("Edit ${horse.name}")
+
             StatType.entries.forEachIndexed { index, type ->
                 val stat = horse.stats.getValue(type)
 
@@ -149,59 +151,71 @@ object TUI {
                             "${stat.level}/${stat.limit}/${stat.max}"
                 )
             }
+
             println("0. Back")
 
             val choice = inputRequiredInt("Select stat:")
 
             if (choice == 0) return
+
             if (choice !in 1..StatType.entries.size) {
-                println("Invalid option")
+                println(INVALID_OPTION)
                 continue
             }
+
             val type = StatType.entries[choice - 1]
-            editStat(horse, type)
+            editStat(stall, horse, type)
         }
     }
 
-    private fun editStat(horse: Horse, type: StatType) {
-        while (true) {
-            val stat = horse.stats.getValue(type)
+    private fun editStat(
+        stall: Stall,
+        horse: Horse,
+        type: StatType
+    ) {
+        val stat = horse.stats.getValue(type)
 
-            println()
-            println("=== ${type.name} ===")
-            println("1. Level: ${stat.level}")
-            println("2. Limit: ${stat.limit}")
-            println("3. Max:   ${stat.max}")
-            println("0. Back")
+        println("1. Level: ${stat.level}")
+        println("2. Limit: ${stat.limit}")
+        println("3. Max:   ${stat.max}")
+        println("0. Back")
 
-            val result = when (inputRequiredInt("Choose a value to edit:")) {
-                1 -> stat.updateLevel(
-                    inputRequiredInt("Enter new level:")
-                )
+        val result = when (inputRequiredInt("Select value:")) {
+            1 -> stall.updateHorseStat(
+                horse,
+                type,
+                StatField.LEVEL,
+                inputRequiredInt("New level:")
+            )
 
-                2 -> stat.updateLimit(
-                    inputRequiredInt("Enter new limit:")
-                )
+            2 -> stall.updateHorseStat(
+                horse,
+                type,
+                StatField.LIMIT,
+                inputRequiredInt("New limit:")
+            )
 
-                3 -> stat.updateMax(
-                    inputRequiredInt("Enter new max:")
-                )
+            3 -> stall.updateHorseStat(
+                horse,
+                type,
+                StatField.MAX,
+                inputRequiredInt("New max:")
+            )
 
-                0 -> return
+            0 -> return
 
-                else -> {
-                    println("Invalid choice.")
-                    continue
-                }
+            else -> {
+                println(INVALID_OPTION)
+                return
             }
+        }
 
-            when (result) {
-                UpdateResult.Success ->
-                    println("${type.name} updated.")
+        when (result) {
+            UpdateResult.Success ->
+                println("${type.name} updated.")
 
-                is UpdateResult.Error ->
-                    println("Could not update ${type.name}: ${result.message}")
-            }
+            is UpdateResult.Error ->
+                println(result.message)
         }
     }
 
