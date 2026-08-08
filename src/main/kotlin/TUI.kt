@@ -86,7 +86,7 @@ object TUI {
         }
 
         if (AppConfig.isDevelopment) {
-            with(stall.calculator.lastSearchStats) {
+            with(stall.feedingPlanner.lastSearchStats) {
                 println()
                 println("=== Search statistics ===")
                 println("Plan calculated in ${duration.inWholeMilliseconds} ms")
