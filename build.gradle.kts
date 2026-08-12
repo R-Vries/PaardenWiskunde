@@ -48,7 +48,7 @@ kotlin {
 
 // tasks.named<JavaExec>("run") {
 //     systemProperty("app.mode", "development")
-}
+// }
 
 tasks.register<Exec>("packageInstaller") {
     dependsOn("shadowJar")
