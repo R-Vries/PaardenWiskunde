@@ -192,19 +192,24 @@ fun StallSelectionScreen(
     }
 
     Column {
-        Text("PaardenWiskunde")
         Text("Select a stall")
 
-        Stable.stalls.forEach { stall ->
-            Button(
-                onClick = {
-                    onStallSelected(stall)
+        Stable.stalls
+            .chunked(3)
+            .forEach { row ->
+                Row {
+                    row.forEach { stall ->
+                        Button(
+                            onClick = {
+                                onStallSelected(stall)
+                            }
+                        ) {
+                            Text(stall.name)
+                        }
+                    }
                 }
-            ) {
-                Text(stall.name)
             }
-        }
-//TODO: Stalls in rows and columns with max of 6. First full row then full column.
+
         Button(
             onClick = {
                 showAddStallScreen = true
