@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 //Imports for calculations
+import app.AppConfig
 import data.StableRepository
 import domain.stable.Stable
 import domain.stable.Stall
@@ -30,6 +31,9 @@ import domain.horse.Horse
 import domain.stat.StatType
 
 fun startGUI() = application {
+    if (AppConfig.isDevelopment) {
+            println("Running in DEVELOPMENT mode")
+        }
     StableRepository.load()
 
     Window(
