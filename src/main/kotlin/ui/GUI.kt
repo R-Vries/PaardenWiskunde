@@ -1,5 +1,6 @@
 package ui
 
+//Imports for window
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -11,10 +12,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 
+//Imports for calculations
 import data.StableRepository
 import domain.stable.Stable
 import domain.stable.Stall
+import domain.horse.Horse
+import domain.stat.StatType
 
 fun startGUI() = application {
     StableRepository.load()
@@ -192,7 +204,7 @@ fun StallSelectionScreen(
                 Text(stall.name)
             }
         }
-
+//TODO: Stalls in rows and columns with max of 6. First full row then full column.
         Button(
             onClick = {
                 showAddStallScreen = true
@@ -316,12 +328,94 @@ fun InspectHorsesScreen(
 ) {
     Column {
         Text("${stall.name}'s Horses")
-        Text("Hier komen straks de paarden.")
+
+        if (stall.horseCount == 0) {
+            Text("No horses in this stall")
+        } else {
+            for (index in 0 until stall.horseCount) {
+                val horse = stall.get(index)
+
+                HorseDropdown(horse)
+            }
+        }
 
         Button(
             onClick = onBack
         ) {
             Text("Back")
+        }
+    }
+}
+
+@Composable
+fun HorseDropdown(horse: Horse) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column {
+        Button(
+            onClick = {
+                expanded = !expanded
+            }
+        ) {
+            Text(
+                if (expanded) {
+                    "${horse.name} ▲"
+                } else {
+                    "${horse.name} ▼"
+                }
+            )
+        }
+
+        if (expanded) {
+            Column {
+                Row {
+                    Text(
+                        text = "Stat",
+                        modifier = Modifier.width(150.dp)
+                    )
+
+                    Text(
+                        text = "Level",
+                        modifier = Modifier.width(80.dp)
+                    )
+
+                    Text(
+                        text = "Limit",
+                        modifier = Modifier.width(80.dp)
+                    )
+
+                    Text(
+                        text = "Max",
+                        modifier = Modifier.width(80.dp)
+                    )
+                }
+
+                StatType.entries.forEach { type ->
+                    val stat = horse.stats.getValue(type)
+
+                    Row {
+                        Text(
+                            text = type.name,
+                            modifier = Modifier.width(150.dp)
+                        )
+
+                        Text(
+                            text = stat.level.toString(),
+                            modifier = Modifier.width(80.dp)
+                        )
+
+                        Text(
+                            text = stat.limit.toString(),
+                            modifier = Modifier.width(80.dp)
+                        )
+
+                        Text(
+                            text = stat.max.toString(),
+                            modifier = Modifier.width(80.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
