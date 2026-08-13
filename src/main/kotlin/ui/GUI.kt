@@ -1,9 +1,9 @@
 package ui
 
-// Application window imports
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,101 +12,249 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-
-// Imports from programm
-import app.AppConfig
 import data.StableRepository
-import domain.horse.Horse
-import domain.horse.Stat
-import domain.horse.StatField
-import domain.horse.UpdateResult
-import domain.material.FeedValidation
 import domain.stable.Stable
 import domain.stable.Stall
-import domain.stat.StatType
-import planner.formatPlan
-import kotlin.collections.get
-import kotlin.text.ifEmpty
-import kotlin.time.measureTimedValue
 
 fun startGUI() = application {
-    if (AppConfig.isDevelopment) {
-        println("Running in DEVELOPMENT mode")
-    }
+    StableRepository.load()
+
     Window(
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {
+            StableRepository.save()
+            exitApplication()
+        },
         title = "PaardenWiskunde"
     ) {
-        App()
+        App(
+            onExit = {
+                StableRepository.save()
+                exitApplication()
+            }
+        )
     }
 }
 
 @Composable
-fun App() {
-    var currentScreen by remember { mutableStateOf("menu") }
+fun App(
+    onExit: () -> Unit
+) {
+    var currentScreen by remember { mutableStateOf("stallSelection") }
+    var selectedStall by remember { mutableStateOf<Stall?>(null) }
 
     when (currentScreen) {
-        "menu" -> MainMenu(
-            onInspectHorses = {
-                currentScreen = "inspect"
+
+       
+        //Stall selection
+        "stallSelection" -> StallSelectionScreen(
+            onStallSelected = { stall ->
+                selectedStall = stall
+                currentScreen = "mainMenu"
             },
-            onFeedingPlan = {
-                currentScreen = "feeding"
+            onExit = onExit
+        )
+
+        //Main menu
+        "mainMenu" -> {
+            selectedStall?.let { stall ->
+                MainMenu(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "stallSelection"
+                    },
+                    onInspectHorses = {
+                        currentScreen = "inspect"
+                    },
+                    onFeedingPlan = {
+                        currentScreen = "feeding"
+                    },
+                    onAddHorse = {
+                        currentScreen = "add"
+                    },
+                    onRemoveHorse = {
+                        currentScreen = "remove"
+                    },
+                    onRenameHorse = {
+                        currentScreen = "rename"
+                    },
+                    onEditHorse = {
+                        currentScreen = "edit"
+                    }
+                )
+            }
+        }
+
+        //Inspect horses
+        "inspect" -> {
+            selectedStall?.let { stall ->
+                InspectHorsesScreen(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "mainMenu"
+                    }
+                )
+            }
+        }
+
+        //Feeding plan
+        "feeding" -> {
+            selectedStall?.let { stall ->
+                FeedingPlanScreen(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "mainMenu"
+                    }
+                )
+            }
+        }
+
+        //Add horse
+        "add" -> {
+            selectedStall?.let { stall ->
+                AddHorseScreen(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "mainMenu"
+                    }
+                )
+            }
+        }
+
+        //Remove horse
+        "remove" -> {
+            selectedStall?.let { stall ->
+                RemoveHorseScreen(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "mainMenu"
+                    }
+                )
+            }
+        }
+
+        //Rename horse
+        "rename" -> {
+            selectedStall?.let { stall ->
+                RenameHorseScreen(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "mainMenu"
+                    }
+                )
+            }
+        }
+
+        //Edit horse
+        "edit" -> {
+            selectedStall?.let { stall ->
+                EditHorseScreen(
+                    stall = stall,
+                    onBack = {
+                        currentScreen = "mainMenu"
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StallSelectionScreen(
+    onStallSelected: (Stall) -> Unit,
+    onExit: () -> Unit
+) {
+    var showAddStallScreen by remember { mutableStateOf(false) }
+
+    if (showAddStallScreen) {
+        AddStallScreen(
+            onStallAdded = { stall ->
+                showAddStallScreen = false
+                onStallSelected(stall)
             },
-            onAddHorse = {
-                currentScreen = "add"
+            onBack = {
+                showAddStallScreen = false
+            }
+        )
+
+        return
+    }
+
+    Column {
+        Text("PaardenWiskunde")
+        Text("Select a stall")
+
+        Stable.stalls.forEach { stall ->
+            Button(
+                onClick = {
+                    onStallSelected(stall)
+                }
+            ) {
+                Text(stall.name)
+            }
+        }
+
+        Button(
+            onClick = {
+                showAddStallScreen = true
+            }
+        ) {
+            Text("Add new stall")
+        }
+
+        Button(
+            onClick = onExit
+        ) {
+            Text("Exit")
+        }
+    }
+}
+
+@Composable
+fun AddStallScreen(
+    onStallAdded: (Stall) -> Unit,
+    onBack: () -> Unit
+) {
+    var stallName by remember { mutableStateOf("") }
+
+    Column {
+        Text("Add new stall")
+
+        TextField(
+            value = stallName,
+            onValueChange = {
+                stallName = it
             },
-            onRemoveHorse = {
-                currentScreen = "remove"
-            },
-            onRenameHorse = {
-                currentScreen = "rename"
-            },
-            onEditHorse = {
-                currentScreen = "edit"
+            label = {
+                Text("Stall name")
             }
         )
 
-        "inspect" -> InspectHorsesScreen(
-            onBack = {
-                currentScreen = "menu"
-            }
-        )
+        Button(
+            onClick = {
+                val name = stallName.trim()
+                    .ifEmpty {
+                        "Stable #${Stable.stalls.size + 1}"
+                    }
 
-        "feeding" -> FeedingPlanScreen(
-            onBack = {
-                currentScreen = "menu"
+                val stall = Stable.addStall(name)
+                onStallAdded(stall)
             }
-        )
+        ) {
+            Text("Add")
+        }
 
-        "add" -> AddHorseScreen(
-            onBack = {
-                currentScreen = "menu"
-            }
-        )
-
-        "remove" -> RemoveHorseScreen(
-            onBack = {
-                currentScreen = "menu"
-            }
-        )
-
-        "rename" -> RenameHorseScreen(
-            onBack = {
-                currentScreen = "menu"
-            }
-        )
-
-        "edit" -> EditHorseScreen(
-            onBack = {
-                currentScreen = "menu"
-            }
-        )
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
+        }
     }
 }
 
 @Composable
 fun MainMenu(
+    stall: Stall,
+    onBack: () -> Unit,
     onInspectHorses: () -> Unit,
     onFeedingPlan: () -> Unit,
     onAddHorse: () -> Unit,
@@ -115,7 +263,7 @@ fun MainMenu(
     onEditHorse: () -> Unit
 ) {
     Column {
-        Text("Rick's Manege")
+        Text("${stall.name}'s menu")
 
         Button(
             onClick = onInspectHorses
@@ -152,15 +300,22 @@ fun MainMenu(
         ) {
             Text("6. Edit horse")
         }
+
+        Button(
+            onClick = onBack
+        ) {
+            Text("0. Back to stall selection")
+        }
     }
 }
 
 @Composable
 fun InspectHorsesScreen(
+    stall: Stall,
     onBack: () -> Unit
 ) {
     Column {
-        Text("Inspect horses")
+        Text("${stall.name}'s Horses")
         Text("Hier komen straks de paarden.")
 
         Button(
@@ -173,11 +328,12 @@ fun InspectHorsesScreen(
 
 @Composable
 fun FeedingPlanScreen(
+    stall: Stall,
     onBack: () -> Unit
 ) {
     Column {
         Text("Calculate feeding plan")
-        Text("Hier komt straks het voedingsplan.")
+        Text("Stall: ${stall.name}")
 
         Button(
             onClick = onBack
@@ -189,11 +345,12 @@ fun FeedingPlanScreen(
 
 @Composable
 fun AddHorseScreen(
+    stall: Stall,
     onBack: () -> Unit
 ) {
     Column {
         Text("Add horse")
-        Text("Hier kun je straks een paard toevoegen.")
+        Text("Add a horse to ${stall.name}")
 
         Button(
             onClick = onBack
@@ -205,11 +362,12 @@ fun AddHorseScreen(
 
 @Composable
 fun RemoveHorseScreen(
+    stall: Stall,
     onBack: () -> Unit
 ) {
     Column {
         Text("Remove horse")
-        Text("Hier kun je straks een paard verwijderen.")
+        Text("Remove a horse from ${stall.name}")
 
         Button(
             onClick = onBack
@@ -221,11 +379,12 @@ fun RemoveHorseScreen(
 
 @Composable
 fun RenameHorseScreen(
+    stall: Stall,
     onBack: () -> Unit
 ) {
     Column {
         Text("Rename horse")
-        Text("Hier kun je straks een paard hernoemen.")
+        Text("Rename a horse in ${stall.name}")
 
         Button(
             onClick = onBack
@@ -237,11 +396,12 @@ fun RenameHorseScreen(
 
 @Composable
 fun EditHorseScreen(
+    stall: Stall,
     onBack: () -> Unit
 ) {
     Column {
         Text("Edit horse")
-        Text("Hier kun je straks een paard aanpassen.")
+        Text("Edit a horse in ${stall.name}")
 
         Button(
             onClick = onBack
