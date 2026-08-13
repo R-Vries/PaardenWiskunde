@@ -30,6 +30,9 @@ import kotlin.text.ifEmpty
 import kotlin.time.measureTimedValue
 
 fun startGUI() = application {
+    if (AppConfig.isDevelopment) {
+        println("Running in DEVELOPMENT mode")
+    }
     Window(
         onCloseRequest = ::exitApplication,
         title = "PaardenWiskunde"

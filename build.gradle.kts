@@ -37,18 +37,11 @@ kotlin {
     jvmToolchain(21)
 }
 
-// application {
-//     mainClass.set("app.MainKt")
-// }
-
-// Necessary to allow input in the terminal
-// tasks.withType<JavaExec> {
-//     standardInput = System.`in`
-// }
-
-// tasks.named<JavaExec>("run") {
-//     systemProperty("app.mode", "development")
-// }
+tasks.withType<JavaExec>().configureEach {
+    if (name == "run") {
+        systemProperty("app.mode", "development")
+    }
+}
 
 tasks.register<Exec>("packageInstaller") {
     dependsOn("shadowJar")
