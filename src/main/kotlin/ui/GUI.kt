@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 //Imports for calculations
 import data.StableRepository
@@ -192,9 +193,11 @@ fun StallSelectionScreen(
     }
 
     Column {
+        Text("PaardenWiskunde")
         Text("Select a stall")
 
         Stable.stalls
+            .take(6)
             .chunked(3)
             .forEach { row ->
                 Row {
@@ -212,10 +215,24 @@ fun StallSelectionScreen(
 
         Button(
             onClick = {
-                showAddStallScreen = true
-            }
+                if (Stable.stalls.size < 6) {
+                    showAddStallScreen = true
+                }
+            },
+            enabled = Stable.stalls.size < 6
         ) {
-            Text("Add new stall")
+            Text(
+                text = if (Stable.stalls.size < 6) {
+                    "Add new stall"
+                } else {
+                    "Maximum of 6 stalls reached"
+                },
+                color = if (Stable.stalls.size < 6) {
+                    Color.Unspecified
+                } else {
+                    Color.Red
+                }
+            )
         }
 
         Button(
