@@ -43,162 +43,210 @@ fun startGUI() = application {
 
 @Composable
 fun App() {
-
-    // Houdt bij welk scherm wordt weergegeven
     var currentScreen by remember { mutableStateOf("menu") }
 
     when (currentScreen) {
-
-        "menu" -> {
-            Column {
-                Text("Rick's Manege")
-
-                Button(
-                    onClick = {
-                        currentScreen = "inspect"
-                    }
-                ) {
-                    Text("1. Inspect horses")
-                }
-
-                Button(
-                    onClick = {
-                        currentScreen = "feeding"
-                    }
-                ) {
-                    Text("2. Calculate feeding plan")
-                }
-
-                Button(
-                    onClick = {
-                        currentScreen = "add"
-                    }
-                ) {
-                    Text("3. Add horse")
-                }
-
-                Button(
-                    onClick = {
-                        currentScreen = "remove"
-                    }
-                ) {
-                    Text("4. Remove horse")
-                }
-
-                Button(
-                    onClick = {
-                        currentScreen = "rename"
-                    }
-                ) {
-                    Text("5. Rename horse")
-                }
-
-                Button(
-                    onClick = {
-                        currentScreen = "edit"
-                    }
-                ) {
-                    Text("6. Edit horse")
-                }
-
-                Button(
-                    onClick = {
-                        println("Returning to stall selection...")
-                    }
-                ) {
-                    Text("0. Back to stall selection")
-                }
+        "menu" -> MainMenu(
+            onInspectHorses = {
+                currentScreen = "inspect"
+            },
+            onFeedingPlan = {
+                currentScreen = "feeding"
+            },
+            onAddHorse = {
+                currentScreen = "add"
+            },
+            onRemoveHorse = {
+                currentScreen = "remove"
+            },
+            onRenameHorse = {
+                currentScreen = "rename"
+            },
+            onEditHorse = {
+                currentScreen = "edit"
             }
+        )
+
+        "inspect" -> InspectHorsesScreen(
+            onBack = {
+                currentScreen = "menu"
+            }
+        )
+
+        "feeding" -> FeedingPlanScreen(
+            onBack = {
+                currentScreen = "menu"
+            }
+        )
+
+        "add" -> AddHorseScreen(
+            onBack = {
+                currentScreen = "menu"
+            }
+        )
+
+        "remove" -> RemoveHorseScreen(
+            onBack = {
+                currentScreen = "menu"
+            }
+        )
+
+        "rename" -> RenameHorseScreen(
+            onBack = {
+                currentScreen = "menu"
+            }
+        )
+
+        "edit" -> EditHorseScreen(
+            onBack = {
+                currentScreen = "menu"
+            }
+        )
+    }
+}
+
+@Composable
+fun MainMenu(
+    onInspectHorses: () -> Unit,
+    onFeedingPlan: () -> Unit,
+    onAddHorse: () -> Unit,
+    onRemoveHorse: () -> Unit,
+    onRenameHorse: () -> Unit,
+    onEditHorse: () -> Unit
+) {
+    Column {
+        Text("Rick's Manege")
+
+        Button(
+            onClick = onInspectHorses
+        ) {
+            Text("1. Inspect horses")
         }
 
-        "inspect" -> {
-            Column {
-                Text("Inspect horses")
-                Text("Hier komen straks de paarden.")
-
-                Button(
-                    onClick = {
-                        currentScreen = "menu"
-                    }
-                ) {
-                    Text("Back")
-                }
-            }
+        Button(
+            onClick = onFeedingPlan
+        ) {
+            Text("2. Calculate feeding plan")
         }
 
-        "feeding" -> {
-            Column {
-                Text("Calculate feeding plan")
-                Text("Hier komt straks het voedingsplan.")
-
-                Button(
-                    onClick = {
-                        currentScreen = "menu"
-                    }
-                ) {
-                    Text("Back")
-                }
-            }
+        Button(
+            onClick = onAddHorse
+        ) {
+            Text("3. Add horse")
         }
 
-        "add" -> {
-            Column {
-                Text("Add horse")
-                Text("Hier kun je straks een paard toevoegen.")
-
-                Button(
-                    onClick = {
-                        currentScreen = "menu"
-                    }
-                ) {
-                    Text("Back")
-                }
-            }
+        Button(
+            onClick = onRemoveHorse
+        ) {
+            Text("4. Remove horse")
         }
 
-        "remove" -> {
-            Column {
-                Text("Remove horse")
-                Text("Hier kun je straks een paard verwijderen.")
-
-                Button(
-                    onClick = {
-                        currentScreen = "menu"
-                    }
-                ) {
-                    Text("Back")
-                }
-            }
+        Button(
+            onClick = onRenameHorse
+        ) {
+            Text("5. Rename horse")
         }
 
-        "rename" -> {
-            Column {
-                Text("Rename horse")
-                Text("Hier kun je straks een paard hernoemen.")
-
-                Button(
-                    onClick = {
-                        currentScreen = "menu"
-                    }
-                ) {
-                    Text("Back")
-                }
-            }
+        Button(
+            onClick = onEditHorse
+        ) {
+            Text("6. Edit horse")
         }
+    }
+}
 
-        "edit" -> {
-            Column {
-                Text("Edit horse")
-                Text("Hier kun je straks een paard aanpassen.")
+@Composable
+fun InspectHorsesScreen(
+    onBack: () -> Unit
+) {
+    Column {
+        Text("Inspect horses")
+        Text("Hier komen straks de paarden.")
 
-                Button(
-                    onClick = {
-                        currentScreen = "menu"
-                    }
-                ) {
-                    Text("Back")
-                }
-            }
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
+        }
+    }
+}
+
+@Composable
+fun FeedingPlanScreen(
+    onBack: () -> Unit
+) {
+    Column {
+        Text("Calculate feeding plan")
+        Text("Hier komt straks het voedingsplan.")
+
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
+        }
+    }
+}
+
+@Composable
+fun AddHorseScreen(
+    onBack: () -> Unit
+) {
+    Column {
+        Text("Add horse")
+        Text("Hier kun je straks een paard toevoegen.")
+
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
+        }
+    }
+}
+
+@Composable
+fun RemoveHorseScreen(
+    onBack: () -> Unit
+) {
+    Column {
+        Text("Remove horse")
+        Text("Hier kun je straks een paard verwijderen.")
+
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
+        }
+    }
+}
+
+@Composable
+fun RenameHorseScreen(
+    onBack: () -> Unit
+) {
+    Column {
+        Text("Rename horse")
+        Text("Hier kun je straks een paard hernoemen.")
+
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
+        }
+    }
+}
+
+@Composable
+fun EditHorseScreen(
+    onBack: () -> Unit
+) {
+    Column {
+        Text("Edit horse")
+        Text("Hier kun je straks een paard aanpassen.")
+
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
         }
     }
 }
