@@ -34,6 +34,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
+
 //Feedingplan
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 //Imports for calculations
 import app.AppConfig
@@ -82,117 +86,148 @@ fun App(
     var currentScreen by remember { mutableStateOf("stallSelection") }
     var selectedStall by remember { mutableStateOf<Stall?>(null) }
 
-    when (currentScreen) {
+    val scrollState = rememberScrollState()
 
-       
-        //Stall selection
-        "stallSelection" -> StallSelectionScreen(
-            onStallSelected = { stall ->
-                selectedStall = stall
-                currentScreen = "mainMenu"
-            },
-            onExit = onExit
-        )
+    Column(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .padding(10.dp)
+    ) {
+        when (currentScreen) {
 
-        //Main menu
-        "mainMenu" -> {
-            selectedStall?.let { stall ->
-                MainMenu(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "stallSelection"
-                    },
-                    onInspectHorses = {
-                        currentScreen = "inspect"
-                    },
-                    onFeedingPlan = {
-                        currentScreen = "feeding"
-                    },
-                    onAddHorse = {
-                        currentScreen = "add"
-                    },
-                    onRemoveHorse = {
-                        currentScreen = "remove"
-                    },
-                    onRenameHorse = {
-                        currentScreen = "rename"
-                    },
-                    onEditHorse = {
-                        currentScreen = "edit"
-                    }
-                )
+            // =========================
+            // STALL SELECTION
+            // =========================
+
+            "stallSelection" -> StallSelectionScreen(
+                onStallSelected = { stall ->
+                    selectedStall = stall
+                    currentScreen = "mainMenu"
+                },
+                onExit = onExit
+            )
+
+            // =========================
+            // MAIN MENU
+            // =========================
+
+            "mainMenu" -> {
+                selectedStall?.let { stall ->
+                    MainMenu(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "stallSelection"
+                        },
+                        onInspectHorses = {
+                            currentScreen = "inspect"
+                        },
+                        onFeedingPlan = {
+                            currentScreen = "feeding"
+                        },
+                        onAddHorse = {
+                            currentScreen = "add"
+                        },
+                        onRemoveHorse = {
+                            currentScreen = "remove"
+                        },
+                        onRenameHorse = {
+                            currentScreen = "rename"
+                        },
+                        onEditHorse = {
+                            currentScreen = "edit"
+                        }
+                    )
+                }
             }
-        }
 
-        //Inspect horses
-        "inspect" -> {
-            selectedStall?.let { stall ->
-                InspectHorsesScreen(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "mainMenu"
-                    }
-                )
+            // =========================
+            // INSPECT
+            // =========================
+
+            "inspect" -> {
+                selectedStall?.let { stall ->
+                    InspectHorsesScreen(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "mainMenu"
+                        }
+                    )
+                }
             }
-        }
 
-        //Feeding plan
-        "feeding" -> {
-            selectedStall?.let { stall ->
-                FeedingPlanScreen(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "mainMenu"
-                    }
-                )
+            // =========================
+            // FEEDING
+            // =========================
+
+            "feeding" -> {
+                selectedStall?.let { stall ->
+                    FeedingPlanScreen(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "mainMenu"
+                        }
+                    )
+                }
             }
-        }
 
-        //Add horse
-        "add" -> {
-            selectedStall?.let { stall ->
-                AddHorseScreen(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "mainMenu"
-                    }
-                )
+            // =========================
+            // ADD HORSE
+            // =========================
+
+            "add" -> {
+                selectedStall?.let { stall ->
+                    AddHorseScreen(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "mainMenu"
+                        }
+                    )
+                }
             }
-        }
 
-        //Remove horse
-        "remove" -> {
-            selectedStall?.let { stall ->
-                RemoveHorseScreen(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "mainMenu"
-                    }
-                )
+            // =========================
+            // REMOVE HORSE
+            // =========================
+
+            "remove" -> {
+                selectedStall?.let { stall ->
+                    RemoveHorseScreen(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "mainMenu"
+                        }
+                    )
+                }
             }
-        }
 
-        //Rename horse
-        "rename" -> {
-            selectedStall?.let { stall ->
-                RenameHorseScreen(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "mainMenu"
-                    }
-                )
+            // =========================
+            // RENAME HORSE
+            // =========================
+
+            "rename" -> {
+                selectedStall?.let { stall ->
+                    RenameHorseScreen(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "mainMenu"
+                        }
+                    )
+                }
             }
-        }
 
-        //Edit horse
-        "edit" -> {
-            selectedStall?.let { stall ->
-                EditHorseScreen(
-                    stall = stall,
-                    onBack = {
-                        currentScreen = "mainMenu"
-                    }
-                )
+            // =========================
+            // EDIT HORSE
+            // =========================
+
+            "edit" -> {
+                selectedStall?.let { stall ->
+                    EditHorseScreen(
+                        stall = stall,
+                        onBack = {
+                            currentScreen = "mainMenu"
+                        }
+                    )
+                }
             }
         }
     }
