@@ -17,10 +17,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.mutableStateMapOf
+
+//Imports voor tabel
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 
 //Imports for calculations
 import app.AppConfig
@@ -29,6 +38,7 @@ import domain.stable.Stable
 import domain.stable.Stall
 import domain.horse.Horse
 import domain.stat.StatType
+import domain.horse.Stat
 
 fun startGUI() = application {
     if (AppConfig.isDevelopment) {
@@ -468,14 +478,157 @@ fun AddHorseScreen(
     stall: Stall,
     onBack: () -> Unit
 ) {
-    Column {
-        Text("Add horse")
-        Text("Add a horse to ${stall.name}")
+    var horseName by remember { mutableStateOf("") }
+    var customStats by remember { mutableStateOf(false) }
+
+    val defaultHorse = remember {
+        Horse("Default")
+    }
+
+    val stats = remember {
+        mutableStateMapOf<StatType, Stat>().apply {
+            putAll(defaultHorse.stats)
+        }
+    }
+
+    Column(
+        modifier = Modifier.padding(10.dp)
+    ) {
+        Text("Add horse to ${stall.name}")
+
+        TextField(
+            value = horseName,
+            onValueChange = {
+                horseName = it
+            },
+            label = {
+                Text("Horse name")
+            }
+        )
+
+        Row {
+            Button(
+                onClick = {
+                    customStats = false
+                },
+                enabled = customStats
+            ) {
+                Text("Default stats")
+            }
+
+            Button(
+                onClick = {
+                    customStats = true
+                },
+                enabled = !customStats
+            ) {
+                Text("Custom stats")
+            }
+        }
+
+        if (customStats) {
+            CustomHorseStatsTable(stats)
+        }
+
+        Button(
+            onClick = {
+                val name = horseName.trim()
+                    .ifEmpty {
+                        "Horse #${stall.horseCount + 1}"
+                    }
+
+                if (customStats) {
+                    stall.addHorse(name, stats.toMap())
+                } else {
+                    stall.addHorse(Horse(name))
+                }
+
+                onBack()
+            }
+        ) {
+            Text("Add horse")
+        }
 
         Button(
             onClick = onBack
         ) {
             Text("Back")
+        }
+    }
+}
+
+@Composable
+fun CustomHorseStatsTable(
+    stats: MutableMap<StatType, Stat>
+) {
+    Column {
+        Row {
+            Text(
+                text = "Stat",
+                modifier = Modifier.width(150.dp)
+            )
+
+            Text(
+                text = "Level",
+                modifier = Modifier.width(80.dp)
+            )
+
+            Text(
+                text = "Limit",
+                modifier = Modifier.width(80.dp)
+            )
+
+            Text(
+                text = "Max",
+                modifier = Modifier.width(80.dp)
+            )
+        }
+
+        StatType.entries.forEach { type ->
+            val stat = stats.getValue(type)
+
+            Row {
+                Text(
+                    text = type.name,
+                    modifier = Modifier.width(150.dp)
+                )
+
+                TextField(
+                    value = stat.level.toString(),
+                    onValueChange = { value ->
+                        val level = value.toIntOrNull() ?: return@TextField
+
+                        stats[type] = stat.copy(
+                            level = level
+                        )
+                    },
+                    modifier = Modifier.width(80.dp)
+                )
+
+                TextField(
+                    value = stat.limit.toString(),
+                    onValueChange = { value ->
+                        val limit = value.toIntOrNull() ?: return@TextField
+
+                        stats[type] = stat.copy(
+                            limit = limit
+                        )
+                    },
+                    modifier = Modifier.width(80.dp)
+                )
+
+                TextField(
+                    value = stat.max.toString(),
+                    onValueChange = { value ->
+                        val max = value.toIntOrNull() ?: return@TextField
+
+                        stats[type] = stat.copy(
+                            max = max
+                        )
+                    },
+                    modifier = Modifier.width(80.dp)
+                )
+            }
         }
     }
 }
