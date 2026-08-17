@@ -518,28 +518,31 @@ fun FeedingPlanScreen(
     var plan by remember { mutableStateOf<List<Material>?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Bewaar de indexen van de aangevinkte items.
+    // Bewaart de indexen van de aangevinkte items.
     //
-    // Dit zorgt ervoor dat dubbele ingrediënten onafhankelijk
-    // van elkaar geselecteerd kunnen worden.
-    //
-    // Bijvoorbeeld:
-    // 0 = Hay
-    // 1 = Grain
-    // 2 = Hay
-    //
-    // Index 0 en index 2 kunnen dus afzonderlijk geselecteerd worden.
+    // Hierdoor kunnen dubbele ingrediënten onafhankelijk
+    // van elkaar geselecteerd worden.
     var selectedItems by remember {
         mutableStateOf(setOf<Int>())
     }
 
-    // Bericht dat verschijnt nadat er gevoerd is.
+    // Bericht na het voeren.
     var feedMessage by remember {
         mutableStateOf<String?>(null)
     }
 
     val scope = rememberCoroutineScope()
     var calculating by remember { mutableStateOf(false) }
+
+    // Er moet een paard geselecteerd zijn én een tier gekozen zijn
+    // voordat Calculate gebruikt kan worden.
+    val tierSelected =
+        useHighestPossible || maxTierText.isNotBlank()
+
+    val canCalculate =
+        selectedHorse != null &&
+        tierSelected &&
+        !calculating
 
     Row(
         modifier = Modifier.padding(10.dp)
@@ -571,11 +574,12 @@ fun FeedingPlanScreen(
                         onClick = {
                             selectedHorse = horse
 
-                            // Nieuw paard betekent een nieuw plan.
-                            plan = null
                             errorMessage = null
-                            selectedItems = emptySet()
                             feedMessage = null
+                            selectedItems = emptySet()
+
+                            // Laad het laatst opgeslagen plan van dit paard.
+                            plan = stall.getPlan(horse)
                         }
                     ) {
                         Text(
@@ -595,13 +599,21 @@ fun FeedingPlanScreen(
 
             Text("Maximum food tier:")
 
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 TextField(
                     value = maxTierText,
                     onValueChange = { value ->
+
+                        // Alleen cijfers toestaan.
                         if (value.all { it.isDigit() }) {
                             maxTierText = value
+
+                            // Zodra de gebruiker zelf een tier invult,
+                            // is Highest possible niet meer geselecteerd.
                             useHighestPossible = false
+
                             errorMessage = null
                         }
                     },
@@ -611,12 +623,21 @@ fun FeedingPlanScreen(
                     modifier = Modifier.width(120.dp)
                 )
 
+                Spacer(
+                    modifier = Modifier.width(10.dp)
+                )
+
                 Button(
                     onClick = {
+                        // Highest possible is nu geselecteerd.
                         useHighestPossible = true
-                        maxTierText = "0"
+
+                        // Geen 0 meer in het tekstveld.
+                        maxTierText = ""
+
                         errorMessage = null
-                    }
+                    },
+                    enabled = !useHighestPossible
                 ) {
                     Text("Highest possible")
                 }
@@ -654,17 +675,17 @@ fun FeedingPlanScreen(
                     errorMessage = null
                     feedMessage = null
                     calculating = true
+                    selectedItems = emptySet()
 
                     scope.launch {
                         try {
+                            // Altijd een NIEUW plan berekenen wanneer
+                            // de gebruiker expliciet op Calculate drukt.
                             val calculatedPlan = withContext(Dispatchers.Default) {
                                 stall.feedingPlan(horse, maxTier)
                             }
 
                             plan = calculatedPlan
-
-                            // Reset selectie bij een nieuw plan.
-                            selectedItems = emptySet()
 
                             if (calculatedPlan.isEmpty()) {
                                 errorMessage =
@@ -677,13 +698,14 @@ fun FeedingPlanScreen(
                             selectedItems = emptySet()
 
                             errorMessage =
-                                e.message ?: "Could not calculate feeding plan."
+                                e.message
+                                    ?: "Could not calculate feeding plan."
                         } finally {
                             calculating = false
                         }
                     }
                 },
-                enabled = selectedHorse != null && !calculating
+                enabled = canCalculate
             ) {
                 Text(
                     if (calculating) {
@@ -720,9 +742,7 @@ fun FeedingPlanScreen(
                 Text("No suitable feeding plan could be found.")
             } else {
 
-                // Alle ingrediënten blijven zichtbaar.
-                //
-                // We filteren de aangevinkte items dus NIET weg.
+                // Alle items blijven zichtbaar.
                 plan!!.forEachIndexed { index, material ->
 
                     val checked = index in selectedItems
@@ -766,48 +786,51 @@ fun FeedingPlanScreen(
 
                 Button(
                     onClick = {
-                        val horse = selectedHorse
-                        val currentPlan = plan
+                    val horse = selectedHorse
+                    val currentPlan = plan
 
-                        if (horse != null && currentPlan != null) {
+                    if (horse != null && currentPlan != null) {
 
-                            // Pak alleen de daadwerkelijk aangevinkte
-                            // items uit het plan.
-                            val selectedFood = currentPlan
+                        // Alleen de aangevinkte items ophalen
+                        val selectedFood = currentPlan
+                            .filterIndexed { index, _ ->
+                                index in selectedItems
+                            }
+
+                        if (selectedFood.isNotEmpty()) {
+
+                            // Deze items daadwerkelijk voeren
+                            stall.executePlan(
+                                horse,
+                                selectedFood
+                            )
+
+                            // Bepaal wat er nog over is
+                            val remainingPlan = currentPlan
                                 .filterIndexed { index, _ ->
-                                    index in selectedItems
-                                }
-
-                            if (selectedFood.isNotEmpty()) {
-
-                                // Voer de geselecteerde ingrediënten
-                                // daadwerkelijk aan het paard.
-                                stall.executePlan(
-                                    horse,
-                                    selectedFood
-                                )
-
-                                // Namen bewaren voor het bericht.
-                                val foodNames =
-                                    selectedFood.joinToString(", ") {
-                                        it.name
-                                    }
-
-                                feedMessage =
-                                    "${horse.name} has been fed: $foodNames"
-
-                                // Alleen de gevoerde items verwijderen.
-                                //
-                                // Niet-aangevinkte items blijven staan.
-                                plan = currentPlan.filterIndexed { index, _ ->
                                     index !in selectedItems
                                 }
 
-                                // Selectie leegmaken.
-                                selectedItems = emptySet()
+                            // Update het opgeslagen laatste plan van het paard
+                            horse.latestPlan = remainingPlan
+
+                            // Meteen opslaan naar JSON
+                            StableRepository.save()
+
+                            // Bericht tonen
+                            val foodNames = selectedFood.joinToString(", ") {
+                                it.name
                             }
+
+                            feedMessage =
+                                "${horse.name} has been fed: $foodNames"
+
+                            // GUI bijwerken
+                            plan = remainingPlan
+                            selectedItems = emptySet()
                         }
-                    },
+                    }
+                },
                     enabled = selectedItems.isNotEmpty()
                 ) {
                     Text("Feed")
@@ -829,6 +852,7 @@ fun FeedingPlanScreen(
                     )
                 }
             }
+
         }
     }
 }
