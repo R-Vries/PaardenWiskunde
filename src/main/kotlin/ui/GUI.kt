@@ -21,8 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.mutableStateMapOf
-
-//Imports voor tabel
+import androidx.compose.material3.Checkbox
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -35,6 +34,14 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
+//Feedingplan
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.Alignment
+
 //Imports for calculations
 import app.AppConfig
 import data.StableRepository
@@ -44,6 +51,7 @@ import domain.horse.Horse
 import domain.stat.StatType
 import domain.horse.Stat
 import domain.horse.StatField
+import domain.material.Material
 
 fun startGUI() = application {
     if (AppConfig.isDevelopment) {
@@ -461,19 +469,331 @@ fun HorseDropdown(horse: Horse) {
     }
 }
 
+
 @Composable
 fun FeedingPlanScreen(
     stall: Stall,
     onBack: () -> Unit
 ) {
-    Column {
-        Text("Calculate feeding plan")
-        Text("Stall: ${stall.name}")
+    var selectedHorse by remember { mutableStateOf<Horse?>(null) }
 
-        Button(
-            onClick = onBack
+    var maxTierText by remember { mutableStateOf("") }
+    var useHighestPossible by remember { mutableStateOf(false) }
+
+    var plan by remember { mutableStateOf<List<Material>?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Bewaar de indexen van de aangevinkte items.
+    //
+    // Dit zorgt ervoor dat dubbele ingrediënten onafhankelijk
+    // van elkaar geselecteerd kunnen worden.
+    //
+    // Bijvoorbeeld:
+    // 0 = Hay
+    // 1 = Grain
+    // 2 = Hay
+    //
+    // Index 0 en index 2 kunnen dus afzonderlijk geselecteerd worden.
+    var selectedItems by remember {
+        mutableStateOf(setOf<Int>())
+    }
+
+    // Bericht dat verschijnt nadat er gevoerd is.
+    var feedMessage by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    val scope = rememberCoroutineScope()
+    var calculating by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.padding(10.dp)
+    ) {
+
+        // =========================
+        // LINKERKANT
+        // =========================
+
+        Column(
+            modifier = Modifier.width(350.dp)
         ) {
-            Text("Back")
+            Text("Calculate feeding plan")
+            Text("Stall: ${stall.name}")
+
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+            Text("Select horse:")
+
+            if (stall.horseCount == 0) {
+                Text("No horses in this stall")
+            } else {
+                for (index in 0 until stall.horseCount) {
+                    val horse = stall.get(index)
+
+                    Button(
+                        onClick = {
+                            selectedHorse = horse
+
+                            // Nieuw paard betekent een nieuw plan.
+                            plan = null
+                            errorMessage = null
+                            selectedItems = emptySet()
+                            feedMessage = null
+                        }
+                    ) {
+                        Text(
+                            if (selectedHorse == horse) {
+                                "${horse.name} ✓"
+                            } else {
+                                horse.name
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+            Text("Maximum food tier:")
+
+            Row {
+                TextField(
+                    value = maxTierText,
+                    onValueChange = { value ->
+                        if (value.all { it.isDigit() }) {
+                            maxTierText = value
+                            useHighestPossible = false
+                            errorMessage = null
+                        }
+                    },
+                    label = {
+                        Text("Max tier")
+                    },
+                    modifier = Modifier.width(120.dp)
+                )
+
+                Button(
+                    onClick = {
+                        useHighestPossible = true
+                        maxTierText = "0"
+                        errorMessage = null
+                    }
+                ) {
+                    Text("Highest possible")
+                }
+            }
+
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+            Button(
+                onClick = {
+                    val horse = selectedHorse
+
+                    if (horse == null) {
+                        errorMessage = "Please select a horse first."
+                        return@Button
+                    }
+
+                    val maxTier = if (useHighestPossible) {
+                        0
+                    } else {
+                        maxTierText.toIntOrNull()
+                    }
+
+                    if (maxTier == null) {
+                        errorMessage = "Please enter a valid max tier."
+                        return@Button
+                    }
+
+                    if (maxTier < 0) {
+                        errorMessage = "Max tier cannot be negative."
+                        return@Button
+                    }
+
+                    errorMessage = null
+                    feedMessage = null
+                    calculating = true
+
+                    scope.launch {
+                        try {
+                            val calculatedPlan = withContext(Dispatchers.Default) {
+                                stall.feedingPlan(horse, maxTier)
+                            }
+
+                            plan = calculatedPlan
+
+                            // Reset selectie bij een nieuw plan.
+                            selectedItems = emptySet()
+
+                            if (calculatedPlan.isEmpty()) {
+                                errorMessage =
+                                    "No suitable feeding plan could be found."
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+
+                            plan = null
+                            selectedItems = emptySet()
+
+                            errorMessage =
+                                e.message ?: "Could not calculate feeding plan."
+                        } finally {
+                            calculating = false
+                        }
+                    }
+                },
+                enabled = selectedHorse != null && !calculating
+            ) {
+                Text(
+                    if (calculating) {
+                        "Calculating..."
+                    } else {
+                        "Calculate feeding plan"
+                    }
+                )
+            }
+
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+
+            Button(
+                onClick = onBack
+            ) {
+                Text("Back")
+            }
+        }
+
+        // =========================
+        // RECHTERKANT
+        // =========================
+
+        Column(
+            modifier = Modifier.padding(start = 30.dp)
+        ) {
+            Text("Feeding plan")
+
+            if (plan == null) {
+                Text("Select a horse and calculate a plan.")
+            } else if (plan!!.isEmpty()) {
+                Text("No suitable feeding plan could be found.")
+            } else {
+
+                // Alle ingrediënten blijven zichtbaar.
+                //
+                // We filteren de aangevinkte items dus NIET weg.
+                plan!!.forEachIndexed { index, material ->
+
+                    val checked = index in selectedItems
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    ) {
+                        Checkbox(
+                            checked = checked,
+                            onCheckedChange = { isChecked ->
+
+                                selectedItems =
+                                    if (isChecked) {
+                                        selectedItems + index
+                                    } else {
+                                        selectedItems - index
+                                    }
+                            }
+                        )
+
+                        Text(
+                            text = material.name,
+                            color = if (checked) {
+                                Color.Gray
+                            } else {
+                                Color.Unspecified
+                            },
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(
+                    modifier = Modifier.height(10.dp)
+                )
+
+                // =========================
+                // FEED BUTTON
+                // =========================
+
+                Button(
+                    onClick = {
+                        val horse = selectedHorse
+                        val currentPlan = plan
+
+                        if (horse != null && currentPlan != null) {
+
+                            // Pak alleen de daadwerkelijk aangevinkte
+                            // items uit het plan.
+                            val selectedFood = currentPlan
+                                .filterIndexed { index, _ ->
+                                    index in selectedItems
+                                }
+
+                            if (selectedFood.isNotEmpty()) {
+
+                                // Voer de geselecteerde ingrediënten
+                                // daadwerkelijk aan het paard.
+                                stall.executePlan(
+                                    horse,
+                                    selectedFood
+                                )
+
+                                // Namen bewaren voor het bericht.
+                                val foodNames =
+                                    selectedFood.joinToString(", ") {
+                                        it.name
+                                    }
+
+                                feedMessage =
+                                    "${horse.name} has been fed: $foodNames"
+
+                                // Alleen de gevoerde items verwijderen.
+                                //
+                                // Niet-aangevinkte items blijven staan.
+                                plan = currentPlan.filterIndexed { index, _ ->
+                                    index !in selectedItems
+                                }
+
+                                // Selectie leegmaken.
+                                selectedItems = emptySet()
+                            }
+                        }
+                    },
+                    enabled = selectedItems.isNotEmpty()
+                ) {
+                    Text("Feed")
+                }
+
+                // =========================
+                // FEED MELDING
+                // =========================
+
+                feedMessage?.let { message ->
+
+                    Spacer(
+                        modifier = Modifier.height(10.dp)
+                    )
+
+                    Text(
+                        text = message,
+                        color = Color(0xFF388E3C)
+                    )
+                }
+            }
         }
     }
 }

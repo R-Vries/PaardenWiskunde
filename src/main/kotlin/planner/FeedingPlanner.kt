@@ -12,19 +12,34 @@ class FeedingPlanner(
     var lastSearchStats = SearchStats()
     var algorithm = SearchAlgorithm.ASTAR
 
-    fun calculatePlan(horse: Horse, maxTier: Int): List<Material> {
+        fun calculatePlan(horse: Horse, maxTier: Int): List<Material> {
         val stats = SearchStats()
-        // maxTier = 0 means no limit
+
         val bestMaterials = materials
-            .filter { it.tier <= horse.highestStat() && (maxTier == 0 || it.tier <= maxTier) }
-            .let { filtered ->
-                val max = filtered.maxBy { it.tier }
-                filtered.filter { it.tier == max.tier }
+            .filter {
+                it.tier <= horse.highestStat() &&
+                (maxTier == 0 || it.tier <= maxTier)
             }
-        val plan = when (algorithm) {
-            SearchAlgorithm.BFS -> calculatePlanBfs(horse, bestMaterials, stats)
-            SearchAlgorithm.ASTAR -> calculatePlanAStar(horse, bestMaterials, stats)
+
+        if (bestMaterials.isEmpty()) {
+            lastSearchStats = stats
+            return emptyList()
         }
+
+        val maxTierAvailable = bestMaterials.maxOf { it.tier }
+
+        val materialsAtBestTier = bestMaterials.filter {
+            it.tier == maxTierAvailable
+        }
+
+        val plan = when (algorithm) {
+            SearchAlgorithm.BFS ->
+                calculatePlanBfs(horse, materialsAtBestTier, stats)
+
+            SearchAlgorithm.ASTAR ->
+                calculatePlanAStar(horse, materialsAtBestTier, stats)
+        }
+
         lastSearchStats = stats
         return plan
     }
@@ -57,5 +72,5 @@ fun Horse.stateHash(): String {
 
 /** Returns the highest stat level of the horse */
 fun Horse.highestStat(): Int {
-    return stats.values.maxOf { it.level }
+    return stats.values.maxOfOrNull { it.level } ?: 0
 }
