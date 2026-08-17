@@ -483,51 +483,80 @@ fun AddHorseScreen(
     onBack: () -> Unit
 ) {
     var horseName by remember { mutableStateOf("") }
-    var addedHorseName by remember { mutableStateOf<String?>(null) }
+    var customStats by remember { mutableStateOf(false) }
+
+    // Maak een tijdelijk paard om de standaardstats op te halen
+    val defaultHorse = remember {
+        Horse("Default")
+    }
+
+    // Begin de custom stats met dezelfde waardes als de default stats
+    val stats = remember {
+        mutableStateMapOf<StatType, Stat>().apply {
+            putAll(defaultHorse.stats)
+        }
+    }
 
     Column {
         Text("Add horse to ${stall.name}")
 
-        if (addedHorseName == null) {
-            TextField(
-                value = horseName,
-                onValueChange = {
-                    horseName = it
+        TextField(
+            value = horseName,
+            onValueChange = {
+                horseName = it
+            },
+            label = {
+                Text("Horse name")
+            }
+        )
+
+        Row {
+            Button(
+                onClick = {
+                    customStats = false
                 },
-                label = {
-                    Text("Horse name")
-                }
-            )
+                enabled = customStats
+            ) {
+                Text("Default stats")
+            }
 
             Button(
                 onClick = {
-                    val name = horseName.trim()
-                        .ifEmpty {
-                            "Horse #${stall.horseCount + 1}"
-                        }
+                    customStats = true
+                },
+                enabled = !customStats
+            ) {
+                Text("Custom stats")
+            }
+        }
 
+        if (customStats) {
+            CustomHorseStatsTable(stats)
+        }
+
+        Button(
+            onClick = {
+                val name = horseName.trim()
+                    .ifEmpty {
+                        "Horse #${stall.horseCount + 1}"
+                    }
+
+                if (customStats) {
+                    stall.addHorse(name, stats.toMap())
+                } else {
                     stall.addHorse(Horse(name))
-
-                    addedHorseName = name
                 }
-            ) {
-                Text("Add horse")
-            }
 
-            Button(
-                onClick = onBack
-            ) {
-                Text("Back")
+                onBack()
             }
-        } else {
-            Text("Horse added successfully!")
-            Text("${addedHorseName} has been added to ${stall.name}.")
+        ) {
+            Text("Add horse")
+        }
 
-            Button(
-                onClick = onBack
-            ) {
-                Text("Back")
-            }
+        Button(
+            onClick = onBack
+        ) {
+            Text("Back")
         }
     }
 }
@@ -892,9 +921,99 @@ fun RenameHorseScreen(
     stall: Stall,
     onBack: () -> Unit
 ) {
+    var selectedHorse by remember { mutableStateOf<Horse?>(null) }
+    var newHorseName by remember { mutableStateOf("") }
+    var renamedHorseName by remember { mutableStateOf<String?>(null) }
+    var oldHorseName by remember { mutableStateOf<String?>(null) }
+
+    // Succesmelding na het hernoemen
+    if (renamedHorseName != null && oldHorseName != null) {
+        Column {
+            Text("Horse renamed successfully!")
+            Text("$oldHorseName has been renamed to $renamedHorseName.")
+
+            Button(
+                onClick = onBack
+            ) {
+                Text("Back")
+            }
+        }
+
+        return
+    }
+
+    // Scherm om een nieuwe naam in te voeren
+    if (selectedHorse != null) {
+        Column {
+            Text("Rename ${selectedHorse!!.name}")
+
+            TextField(
+                value = newHorseName,
+                onValueChange = {
+                    newHorseName = it
+                },
+                label = {
+                    Text("New horse name")
+                }
+            )
+
+            Row {
+                Button(
+                    onClick = {
+                        val name = newHorseName.trim()
+
+                        if (name.isNotEmpty()) {
+                            val oldName = selectedHorse!!.name
+
+                            stall.renameHorse(
+                                selectedHorse!!,
+                                name
+                            )
+
+                            oldHorseName = oldName
+                            renamedHorseName = name
+                            selectedHorse = null
+                        }
+                    },
+                    enabled = newHorseName.trim().isNotEmpty()
+                ) {
+                    Text("Rename")
+                }
+
+                Button(
+                    onClick = {
+                        selectedHorse = null
+                        newHorseName = ""
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        }
+
+        return
+    }
+
+    // Paardenlijst
     Column {
-        Text("Rename horse")
-        Text("Rename a horse in ${stall.name}")
+        Text("Rename horse in ${stall.name}")
+
+        if (stall.horseCount == 0) {
+            Text("No horses in this stall")
+        } else {
+            for (index in 0 until stall.horseCount) {
+                val horse = stall.get(index)
+
+                Button(
+                    onClick = {
+                        selectedHorse = horse
+                        newHorseName = horse.name
+                    }
+                ) {
+                    Text(horse.name)
+                }
+            }
+        }
 
         Button(
             onClick = onBack
