@@ -835,9 +835,55 @@ fun RemoveHorseScreen(
     stall: Stall,
     onBack: () -> Unit
 ) {
+    var selectedHorse by remember { mutableStateOf<Horse?>(null) }
+
+    // Bevestigingsscherm
+    if (selectedHorse != null) {
+        Column {
+            Text(
+                "Are you sure you want to remove ${selectedHorse!!.name}?"
+            )
+
+            Button(
+                onClick = {
+                    stall.removeHorse(selectedHorse!!)
+                    selectedHorse = null
+                }
+            ) {
+                Text("Yes")
+            }
+
+            Button(
+                onClick = {
+                    selectedHorse = null
+                }
+            ) {
+                Text("No")
+            }
+        }
+
+        return
+    }
+
+    // Paardenlijst
     Column {
-        Text("Remove horse")
-        Text("Remove a horse from ${stall.name}")
+        Text("Remove horse from ${stall.name}")
+
+        if (stall.horseCount == 0) {
+            Text("No horses in this stall")
+        } else {
+            for (index in 0 until stall.horseCount) {
+                val horse = stall.get(index)
+
+                Button(
+                    onClick = {
+                        selectedHorse = horse
+                    }
+                ) {
+                    Text(horse.name)
+                }
+            }
+        }
 
         Button(
             onClick = onBack
