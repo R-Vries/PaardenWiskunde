@@ -10,7 +10,8 @@ data class Horse(
     var name: String,
     val stats: MutableMap<StatType, Stat> = StatType.entries.associateWith {
         Stat(1, 10, 30)
-    }.toMutableMap()
+    }.toMutableMap(),
+    var latestPlan: List<Material> = emptyList()
 ) {
     val potency: Int = stats.values.sumOf { it.max }
     /** Increase each stat's limit by the amount specified by the material */

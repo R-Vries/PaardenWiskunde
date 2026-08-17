@@ -39,9 +39,20 @@ class Stall(
      * @param maxTier The maximum tier of the food that should be included in the plan.
      * @return A list of materials that should be fed to the horse to max out its limits.
      */
-    fun feedingPlan(horse: Horse, maxTier: Int): List<Material> =
-        feedingPlanner.calculatePlan(horse, maxTier)
+    fun feedingPlan(horse: Horse, maxTier: Int): List<Material> {
+        var plan = feedingPlanner.calculatePlan(horse, maxTier)
             .let { list -> list.sortedBy { material -> list.indexOf(material)}}
+        horse.latestPlan = plan
+        return plan
+        }
+
+    /**
+     * Retrieves the latest feeding plan for a given horse, if available.
+     * @return null if no plan is available, otherwise returns the list of materials in the plan.
+     */
+    fun getPlan(horse: Horse): List<Material>? {
+        return horse.latestPlan.ifEmpty { null }
+    }
 
     /**
      * Adds a new horse to this stall
