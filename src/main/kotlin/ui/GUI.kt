@@ -43,6 +43,7 @@ import domain.stable.Stall
 import domain.horse.Horse
 import domain.stat.StatType
 import domain.horse.Stat
+import domain.horse.StatField
 
 fun startGUI() = application {
     if (AppConfig.isDevelopment) {
@@ -1028,14 +1029,400 @@ fun EditHorseScreen(
     stall: Stall,
     onBack: () -> Unit
 ) {
+    var editedHorseName by remember { mutableStateOf<String?>(null) }
+
+    if (editedHorseName != null) {
+        Column {
+            Text("$editedHorseName has been edited.")
+
+            Button(
+                onClick = onBack
+            ) {
+                Text("Back")
+            }
+        }
+
+        return
+    }
+
     Column {
-        Text("Edit horse")
-        Text("Edit a horse in ${stall.name}")
+        Text("Edit horses in ${stall.name}")
+
+        if (stall.horseCount == 0) {
+            Text("No horses in this stall")
+        } else {
+            for (index in 0 until stall.horseCount) {
+                val horse = stall.get(index)
+
+                EditHorseDropdown(
+                    stall = stall,
+                    horse = horse,
+                    onEdited = {
+                        editedHorseName = horse.name
+                    }
+                )
+            }
+        }
 
         Button(
             onClick = onBack
         ) {
             Text("Back")
+        }
+    }
+}
+
+@Composable
+fun EditHorseDropdown(
+    stall: Stall,
+    horse: Horse,
+    onEdited: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    val editedStats = remember(horse) {
+        mutableStateMapOf<StatType, Stat>().apply {
+            putAll(horse.stats)
+        }
+    }
+
+    Column {
+        Button(
+            onClick = {
+                expanded = !expanded
+            }
+        ) {
+            Text(
+                if (expanded) {
+                    "${horse.name} ▲"
+                } else {
+                    "${horse.name} ▼"
+                }
+            )
+            }
+        }
+
+        if (expanded) {
+            CustomHorseStatsTable(editedStats)
+
+            Button(
+                onClick = {
+                    editedStats.forEach { (type, newStat) ->
+                        val oldStat = horse.stats.getValue(type)
+
+                        if (newStat.level != oldStat.level) {
+                            stall.updateHorseStat(
+                                horse,
+                                type,
+                                StatField.LEVEL,
+                                newStat.level
+                            )
+                        }
+
+                        if (newStat.limit != oldStat.limit) {
+                            stall.updateHorseStat(
+                                horse,
+                                type,
+                                StatField.LIMIT,
+                                newStat.limit
+                            )
+                        }
+
+                        if (newStat.max != oldStat.max) {
+                            stall.updateHorseStat(
+                                horse,
+                                type,
+                                StatField.MAX,
+                                newStat.max
+                            )
+                        }
+                    }
+
+                    expanded = false
+                    onEdited()
+                }
+            ) {
+                Text("Accept changes")
+            }
+        }
+    }
+
+@Composable
+fun EditHorseStatsTable(
+    stall: Stall,
+    horse: Horse
+) {
+    val types = StatType.entries
+
+    val focusRequesters = remember {
+        types.associateWith {
+            listOf(
+                FocusRequester(),
+                FocusRequester(),
+                FocusRequester()
+            )
+        }
+    }
+
+    Column {
+        // Header
+        Row {
+            Text(
+                text = "Stat",
+                modifier = Modifier.width(150.dp)
+            )
+
+            Text(
+                text = "Level",
+                modifier = Modifier.width(100.dp)
+            )
+
+            Text(
+                text = "Limit",
+                modifier = Modifier.width(100.dp)
+            )
+
+            Text(
+                text = "Max",
+                modifier = Modifier.width(100.dp)
+            )
+        }
+
+        types.forEachIndexed { index, type ->
+
+            val stat = horse.stats.getValue(type)
+            val requesters = focusRequesters.getValue(type)
+
+            val levelValue = remember(type, horse) {
+                mutableStateOf(
+                    TextFieldValue(
+                        text = stat.level.toString(),
+                        selection = TextRange(
+                            0,
+                            stat.level.toString().length
+                        )
+                    )
+                )
+            }
+
+            val limitValue = remember(type, horse) {
+                mutableStateOf(
+                    TextFieldValue(
+                        text = stat.limit.toString(),
+                        selection = TextRange(
+                            0,
+                            stat.limit.toString().length
+                        )
+                    )
+                )
+            }
+
+            val maxValue = remember(type, horse) {
+                mutableStateOf(
+                    TextFieldValue(
+                        text = stat.max.toString(),
+                        selection = TextRange(
+                            0,
+                            stat.max.toString().length
+                        )
+                    )
+                )
+            }
+            Row {
+
+                // -------------------------
+                // STAT
+                // -------------------------
+
+                Text(
+                    text = type.name,
+                    modifier = Modifier.width(150.dp)
+                )
+
+                // -------------------------
+                // LEVEL
+                // -------------------------
+
+                TextField(
+                    value = levelValue.value,
+                    onValueChange = { newValue ->
+                        levelValue.value = newValue
+
+                        newValue.text.toIntOrNull()?.let { newLevel ->
+                            stall.updateHorseStat(
+                                horse,
+                                type,
+                                StatField.LEVEL,
+                                newLevel
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .width(100.dp)
+                        .focusRequester(requesters[0])
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                levelValue.value =
+                                    levelValue.value.copy(
+                                        selection = TextRange(
+                                            0,
+                                            levelValue.value.text.length
+                                        )
+                                    )
+                            }
+                        }
+                        .onPreviewKeyEvent { event ->
+
+                            // Tab -> Limit
+                            if (
+                                event.key == Key.Tab &&
+                                event.type == KeyEventType.KeyDown &&
+                                !event.isShiftPressed
+                            ) {
+                                requesters[1].requestFocus()
+                                true
+                            }
+
+                            // Shift + Tab -> vorige Max
+                            else if (
+                                event.key == Key.Tab &&
+                                event.type == KeyEventType.KeyDown &&
+                                event.isShiftPressed
+                            ) {
+                                if (index > 0) {
+                                    focusRequesters
+                                        .getValue(types[index - 1])[2]
+                                        .requestFocus()
+                                }
+
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                )
+
+                // -------------------------
+                // LIMIT
+                // -------------------------
+
+                TextField(
+                    value = limitValue.value,
+                    onValueChange = { newValue ->
+                        limitValue.value = newValue
+
+                        newValue.text.toIntOrNull()?.let { newLimit ->
+                            stall.updateHorseStat(
+                                horse,
+                                type,
+                                StatField.LIMIT,
+                                newLimit
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .width(100.dp)
+                        .focusRequester(requesters[1])
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                limitValue.value =
+                                    limitValue.value.copy(
+                                        selection = TextRange(
+                                            0,
+                                            limitValue.value.text.length
+                                        )
+                                    )
+                            }
+                        }
+                        .onPreviewKeyEvent { event ->
+
+                            // Tab -> Max
+                            if (
+                                event.key == Key.Tab &&
+                                event.type == KeyEventType.KeyDown &&
+                                !event.isShiftPressed
+                            ) {
+                                requesters[2].requestFocus()
+                                true
+                            }
+
+                            // Shift + Tab -> Level
+                            else if (
+                                event.key == Key.Tab &&
+                                event.type == KeyEventType.KeyDown &&
+                                event.isShiftPressed
+                            ) {
+                                requesters[0].requestFocus()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                )
+
+                // -------------------------
+                // MAX
+                // -------------------------
+
+                TextField(
+                    value = maxValue.value,
+                    onValueChange = { newValue ->
+                        maxValue.value = newValue
+
+                        newValue.text.toIntOrNull()?.let { newMax ->
+                            stall.updateHorseStat(
+                                horse,
+                                type,
+                                StatField.MAX,
+                                newMax
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .width(100.dp)
+                        .focusRequester(requesters[2])
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                maxValue.value =
+                                    maxValue.value.copy(
+                                        selection = TextRange(
+                                            0,
+                                            maxValue.value.text.length
+                                        )
+                                    )
+                            }
+                        }
+                        .onPreviewKeyEvent { event ->
+
+                            // Tab -> volgende stat
+                            if (
+                                event.key == Key.Tab &&
+                                event.type == KeyEventType.KeyDown &&
+                                !event.isShiftPressed
+                            ) {
+                                if (index < types.lastIndex) {
+                                    focusRequesters
+                                        .getValue(types[index + 1])[0]
+                                        .requestFocus()
+                                }
+
+                                true
+                            }
+
+                            // Shift + Tab -> Limit
+                            else if (
+                                event.key == Key.Tab &&
+                                event.type == KeyEventType.KeyDown &&
+                                event.isShiftPressed
+                            ) {
+                                requesters[1].requestFocus()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                )
+            }
         }
     }
 }
