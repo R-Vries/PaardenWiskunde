@@ -483,80 +483,51 @@ fun AddHorseScreen(
     onBack: () -> Unit
 ) {
     var horseName by remember { mutableStateOf("") }
-    var customStats by remember { mutableStateOf(false) }
+    var addedHorseName by remember { mutableStateOf<String?>(null) }
 
-    val defaultHorse = remember {
-        Horse("Default")
-    }
-
-    val stats = remember {
-        mutableStateMapOf<StatType, Stat>().apply {
-            putAll(defaultHorse.stats)
-        }
-    }
-
-    Column(
-        modifier = Modifier.padding(10.dp)
-    ) {
+    Column {
         Text("Add horse to ${stall.name}")
 
-        TextField(
-            value = horseName,
-            onValueChange = {
-                horseName = it
-            },
-            label = {
-                Text("Horse name")
-            }
-        )
-
-        Row {
-            Button(
-                onClick = {
-                    customStats = false
+        if (addedHorseName == null) {
+            TextField(
+                value = horseName,
+                onValueChange = {
+                    horseName = it
                 },
-                enabled = customStats
-            ) {
-                Text("Default stats")
-            }
-
-            Button(
-                onClick = {
-                    customStats = true
-                },
-                enabled = !customStats
-            ) {
-                Text("Custom stats")
-            }
-        }
-
-        if (customStats) {
-            CustomHorseStatsTable(stats)
-        }
-
-        Button(
-            onClick = {
-                val name = horseName.trim()
-                    .ifEmpty {
-                        "Horse #${stall.horseCount + 1}"
-                    }
-
-                if (customStats) {
-                    stall.addHorse(name, stats.toMap())
-                } else {
-                    stall.addHorse(Horse(name))
+                label = {
+                    Text("Horse name")
                 }
+            )
 
-                onBack()
+            Button(
+                onClick = {
+                    val name = horseName.trim()
+                        .ifEmpty {
+                            "Horse #${stall.horseCount + 1}"
+                        }
+
+                    stall.addHorse(Horse(name))
+
+                    addedHorseName = name
+                }
+            ) {
+                Text("Add horse")
             }
-        ) {
-            Text("Add horse")
-        }
 
-        Button(
-            onClick = onBack
-        ) {
-            Text("Back")
+            Button(
+                onClick = onBack
+            ) {
+                Text("Back")
+            }
+        } else {
+            Text("Horse added successfully!")
+            Text("${addedHorseName} has been added to ${stall.name}.")
+
+            Button(
+                onClick = onBack
+            ) {
+                Text("Back")
+            }
         }
     }
 }
@@ -836,29 +807,52 @@ fun RemoveHorseScreen(
     onBack: () -> Unit
 ) {
     var selectedHorse by remember { mutableStateOf<Horse?>(null) }
+    var removedHorseName by remember { mutableStateOf<String?>(null) }
 
-    // Bevestigingsscherm
+    // Bevestiging nadat een paard verwijderd is
+    if (removedHorseName != null) {
+        Column {
+            Text("Horse removed successfully!")
+            Text("$removedHorseName has been removed from ${stall.name}.")
+
+            Button(
+                onClick = onBack
+            ) {
+                Text("Back")
+            }
+        }
+
+        return
+    }
+
+    // Bevestiging voor verwijderen
     if (selectedHorse != null) {
         Column {
             Text(
                 "Are you sure you want to remove ${selectedHorse!!.name}?"
             )
 
-            Button(
-                onClick = {
-                    stall.removeHorse(selectedHorse!!)
-                    selectedHorse = null
-                }
-            ) {
-                Text("Yes")
-            }
+            Row {
+                Button(
+                    onClick = {
+                        val horse = selectedHorse!!
 
-            Button(
-                onClick = {
-                    selectedHorse = null
+                        stall.removeHorse(horse)
+
+                        removedHorseName = horse.name
+                        selectedHorse = null
+                    }
+                ) {
+                    Text("Yes")
                 }
-            ) {
-                Text("No")
+
+                Button(
+                    onClick = {
+                        selectedHorse = null
+                    }
+                ) {
+                    Text("No")
+                }
             }
         }
 
