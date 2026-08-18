@@ -1,5 +1,5 @@
 package app
-import ui.startGUI
+import ui.GUI.startGUI
 import ui.TUI
 import java.io.File
 
