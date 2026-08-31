@@ -1,46 +1,41 @@
 package ui.GUI
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
-import androidx.compose.ui.Alignment
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import app.AppConfig
-import data.StableRepository
-import domain.horse.Horse
-import domain.horse.Stat
-import domain.horse.StatField
-import domain.material.Material
-import domain.stable.Stable
+import androidx.compose.ui.unit.sp
 import domain.stable.Stall
-import domain.stat.StatType
+import domain.stable.Stable
+import ui.GUI.components.GameButton
 
 @Composable
 fun StallSelectionScreen(
     onStallSelected: (Stall) -> Unit,
     onExit: () -> Unit
 ) {
-    var showAddStallScreen by remember { mutableStateOf(false) }
+    var showAddStallScreen by remember {
+        mutableStateOf(false)
+    }
 
     if (showAddStallScreen) {
         AddStallScreen(
@@ -56,53 +51,108 @@ fun StallSelectionScreen(
         return
     }
 
-    Column {
-        Text("PaardenWiskunde")
-        Text("Select a stall")
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
 
-        Stable.stalls
-            .take(6)
-            .chunked(3)
-            .forEach { row ->
-                Row {
-                    row.forEach { stall ->
-                        Button(
-                            onClick = {
-                                onStallSelected(stall)
-                            }
-                        ) {
-                            Text(stall.name)
+        // =========================
+        // ACHTERGROND
+        // =========================
+
+        Image(
+            painter = painterResource(
+                "images/Stall_Background.jpeg"
+            ),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        // Donkere overlay
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Color.Black.copy(alpha = 0.35f)
+                )
+        )
+
+        // =========================
+        // CONTENT
+        // =========================
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            // =========================
+            // TITEL
+            // =========================
+
+            Text(
+                text = "PAARDENWISKUNDE",
+                color = Color.White,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(
+                modifier = Modifier.height(35.dp)
+            )
+
+            // =========================
+            // STALLEN
+            // =========================
+
+            Stable.stalls
+                .take(6)
+                .chunked(3)
+                .forEach { row ->
+
+                    Row(
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        row.forEach { stall ->
+
+                            GameButton(
+                                text = stall.name,
+                                icon = "images/Stall_Icon.png",
+                                onClick = {
+                                    onStallSelected(stall)
+                                }
+                            )
                         }
                     }
                 }
-            }
 
-        Button(
-            onClick = {
-                if (Stable.stalls.size < 6) {
-                    showAddStallScreen = true
-                }
-            },
-            enabled = Stable.stalls.size < 6
-        ) {
-            Text(
+        
+
+            // =========================
+            // ADD STALL
+            // =========================
+
+            GameButton(
                 text = if (Stable.stalls.size < 6) {
                     "Add new stall"
                 } else {
-                    "Maximum of 6 stalls reached"
+                    "Maximum size reached"
                 },
-                color = if (Stable.stalls.size < 6) {
-                    Color.Unspecified
-                } else {
-                    Color.Red
-                }
+                onClick = {
+                    if (Stable.stalls.size < 6) {
+                        showAddStallScreen = true
+                    }
+                },
+                enabled = Stable.stalls.size < 6
             )
-        }
 
-        Button(
-            onClick = onExit
-        ) {
-            Text("Exit")
+            Spacer(
+                modifier = Modifier.height(5.dp)
+            )
+
         }
     }
 }
