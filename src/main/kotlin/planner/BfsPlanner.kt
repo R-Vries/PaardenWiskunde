@@ -1,9 +1,7 @@
 package planner
 
-import Horse
-import Material
-import deepCopy
-import stateHash
+import domain.horse.Horse
+import domain.material.Material
 
 fun calculatePlanBfs(horse: Horse, materials: List<Material>, stats: SearchStats): List<Material> {
     val queue = ArrayDeque<PlanNode>()

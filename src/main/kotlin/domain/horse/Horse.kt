@@ -1,11 +1,17 @@
+package domain.horse
+
+import domain.material.Material
+import domain.stat.StatType
 import kotlinx.serialization.Serializable
+import kotlin.collections.forEach
 
 @Serializable
 data class Horse(
     var name: String,
     val stats: MutableMap<StatType, Stat> = StatType.entries.associateWith {
         Stat(1, 10, 30)
-    }.toMutableMap()
+    }.toMutableMap(),
+    var latestPlan: List<Material> = emptyList()
 ) {
     val potency: Int = stats.values.sumOf { it.max }
     /** Increase each stat's limit by the amount specified by the material */
@@ -34,5 +40,3 @@ data class Horse(
         name = newName
     }
 }
-
-

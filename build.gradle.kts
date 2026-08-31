@@ -1,7 +1,8 @@
 plugins {
     kotlin("plugin.serialization") version "2.2.20"
     kotlin("jvm") version "2.2.20"
-    application
+    id("org.jetbrains.compose") version "1.8.2"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
     id("com.gradleup.shadow") version "8.3.0"
 }
 
@@ -12,12 +13,21 @@ val appName = "PaardenWiskunde"
 val serializationVersion = "1.11.0"
 
 repositories {
+    google()
     mavenCentral()
 }
 
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+    implementation(compose.desktop.currentOs)
+    implementation(compose.material3)
+}
+
+compose.desktop {
+    application {
+        mainClass = "app.MainKt"
+    }
 }
 
 tasks.test {
@@ -27,17 +37,10 @@ kotlin {
     jvmToolchain(21)
 }
 
-application {
-    mainClass.set("MainKt")
-}
-
-// Necessary to allow input in the terminal
-tasks.withType<JavaExec> {
-    standardInput = System.`in`
-}
-
-tasks.named<JavaExec>("run") {
-    systemProperty("app.mode", "development")
+tasks.withType<JavaExec>().configureEach {
+    if (name == "run") {
+        systemProperty("app.mode", "development")
+    }
 }
 
 tasks.register<Exec>("packageInstaller") {
@@ -65,7 +68,7 @@ tasks.register<Exec>("packageInstaller") {
         "--main-jar",
         "$appName-$version-all.jar",
         "--main-class",
-        "MainKt",
+        "app.MainKt",
         "--name",
         appName,
         "--type",
