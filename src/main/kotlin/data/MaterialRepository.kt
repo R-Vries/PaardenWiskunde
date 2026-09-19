@@ -1,16 +1,7 @@
-import kotlinx.serialization.Serializable
+package data
+
+import domain.material.Material
 import kotlinx.serialization.json.Json
-
-@Serializable
-data class Material(
-    val name: String,
-    val tier: Int,
-    val stats: Map<StatType, Int>
-)
-
-enum class StatType {
-    SPEED, ACCELERATION, ALTITUDE, ENERGY, HANDLING, TOUGHNESS, BOOST, TRAINING
-}
 
 object MaterialRepository {
     val materials = loadMaterials()

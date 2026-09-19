@@ -1,7 +1,14 @@
+package app
+import ui.GUI.startGUI
+import ui.TUI
 import java.io.File
 
+// fun main() {
+//     TUI.start()
+// }
+
 fun main() {
-    TUI.start()
+    startGUI()
 }
 
 object AppConfig {

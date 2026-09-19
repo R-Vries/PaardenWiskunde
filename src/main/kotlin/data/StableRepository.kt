@@ -1,3 +1,7 @@
+package data
+
+import app.AppConfig
+import domain.stable.Stable
 import java.io.File
 
 object StableRepository {

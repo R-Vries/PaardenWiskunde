@@ -1,9 +1,8 @@
 package planner
 
-import Horse
-import Material
-import deepCopy
-import stateHash
+import domain.horse.Horse
+import domain.material.Material
+import domain.stat.StatType
 import java.util.PriorityQueue
 
 fun calculatePlanAStar(horse: Horse, materials: List<Material>, stats: SearchStats): List<Material> {
