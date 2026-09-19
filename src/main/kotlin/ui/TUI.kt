@@ -45,7 +45,7 @@ object TUI {
             0 -> null
             Stable.stalls.size + 1 -> {
                 println("Enter stall name:")
-                val name = readlnOrNull()?.trim()?: "domain.stable.Stable #${Stable.stalls.size + 1}"
+                val name = readlnOrNull()?.trim()?: "Stable #${Stable.stalls.size + 1}"
                 Stable.addStall(name)
             }
             in 1..Stable.stalls.size -> Stable.getStall(choice - 1)
@@ -58,7 +58,7 @@ object TUI {
 
     private fun stallMenu(stall: Stall) {
         while (true) {
-            printHeader("${stall.name}'s domain.stable.Stall")
+            printHeader("${stall.name}'s Stall")
             println("1. Inspect horses")
             println("2. Calculate feeding plan")
             println("3. Add horse")
@@ -126,7 +126,7 @@ object TUI {
     }
 
     private fun addHorse(stall: Stall) {
-        val name = inputRequiredString("Enter horse name:").ifEmpty { "domain.horse.Horse #${stall.horseCount + 1}" }
+        val name = inputRequiredString("Enter horse name:").ifEmpty { "Horse #${stall.horseCount + 1}" }
 
         when (inputRequiredString("Press 1 for default stats, 2 for custom stats:")) {
             "1" -> stall.addHorse(Horse(name))

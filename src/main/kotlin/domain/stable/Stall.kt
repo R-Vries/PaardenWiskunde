@@ -101,11 +101,11 @@ class Stall(
         value: Int
     ): UpdateResult {
         if (horse !in horses) {
-            return UpdateResult.Error("domain.horse.Horse does not belong to this stall.")
+            return UpdateResult.Error("Horse does not belong to this stall.")
         }
 
         val stat = horse.stats[type]
-            ?: return UpdateResult.Error("domain.horse.Stat not found.")
+            ?: return UpdateResult.Error("horse.Stat not found.")
 
         return when (field) {
             StatField.LEVEL -> stat.updateLevel(value)
@@ -132,7 +132,7 @@ class Stall(
      * Warns the user if the amount exceeds the feeding slots.
      * @param amount The amount of food to be fed.
      * @param availableFood The available number of food items from the feeding plan.
-     * @return domain.material.FeedValidation.Valid if the amount is valid, domain.material.FeedValidation.Warning if the amount exceeds the feeding slots, domain.material.FeedValidation.Invalid otherwise.
+     * @return Valid if the amount is valid, Warning if the amount exceeds the feeding slots, Invalid otherwise.
      */
     fun validateFeedAmount(amount: Int, availableFood: Int): FeedValidation {
         return when {
