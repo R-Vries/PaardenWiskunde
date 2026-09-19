@@ -107,11 +107,17 @@ class Stall(
         val stat = horse.stats[type]
             ?: return UpdateResult.Error("horse.Stat not found.")
 
-        return when (field) {
+
+        val message = when (field) {
             StatField.LEVEL -> stat.updateLevel(value)
             StatField.LIMIT -> stat.updateLimit(value)
             StatField.MAX -> stat.updateMax(value)
         }
+        // clear the latest plan when a stat is updated because it may not be up to date anymore
+        if (message is UpdateResult.Success) {
+            horse.latestPlan = emptyList()
+        }
+        return message
     }
 
     /**
