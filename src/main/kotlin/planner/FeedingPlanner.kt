@@ -12,7 +12,7 @@ class FeedingPlanner(
     var lastSearchStats = SearchStats()
     var algorithm = SearchAlgorithm.ASTAR
 
-        fun calculatePlan(horse: Horse, maxTier: Int): List<Material> {
+    fun calculatePlan(horse: Horse, maxTier: Int): List<Material> {
         val stats = SearchStats()
 
         val bestMaterials = materials
@@ -41,6 +41,7 @@ class FeedingPlanner(
         }
 
         lastSearchStats = stats
+        println(lastSearchStats)
         return plan
     }
 }

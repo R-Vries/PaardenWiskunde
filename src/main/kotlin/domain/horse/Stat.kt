@@ -11,7 +11,7 @@ data class Stat(
 
     /** Increase the limit by the amount specified, up until the maximum */
     fun increaseLimit(amount: Int) {
-        updateLimit(limit + amount)
+        limit = (limit + amount).coerceAtMost(max)
     }
 
     fun updateLevel(newLevel: Int): UpdateResult {
@@ -27,6 +27,7 @@ data class Stat(
         return UpdateResult.Success
     }
 
+    /** Update the limit, providing an error message and not updating the value when the new limit is invalid */
     fun updateLimit(newLimit: Int): UpdateResult {
         if (newLimit < level) {
             return UpdateResult.Error("Limit cannot be lower than level ($level).")
