@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "nl.sgvtegel"
-version = "1.2.1"
+version = "2.0.0"
 val appName = "PaardenWiskunde"
 
 val serializationVersion = "1.11.0"
@@ -75,7 +75,6 @@ tasks.register<Exec>("packageInstaller") {
         "exe",
         "--dest",
         layout.buildDirectory.dir("installer").get().asFile.absolutePath,
-        "--win-console",
         "--win-menu",
         "--win-per-user-install",
         "--win-menu-group",
